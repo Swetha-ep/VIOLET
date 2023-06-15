@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+<div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-8 col-sm-6 mx-auto">
+        <div class="card shadow card-body">
+            <h4 class="text-center">Login</h4>
+            <form method="post">
+                {% csrf_token %}
+
+                {% if message %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{class}}">
+                            {{message}}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <br>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="text" placeholder="Name" class="form-control" name="username" id="typeUserX">
+                    </div>
+                </div>
+               
+                <br>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="password" placeholder="Password" class="form-control" name="pass" id="typePasswordX">
+                    </div>
+                </div>
+                <br>
+                <p>Don't have account? <a class="linkcolor"href="{% url 'register' %}">Register</a></p>
+                <button type="submit"class="btn btn-secondary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

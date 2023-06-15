@@ -1,0 +1,379 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Yoga Studio Template">
+    <meta name="keywords" content="Yoga, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Violet</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/nice-select.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+    <style>
+        .h{
+            font-size:100px;
+            margin-bottom : 20%;
+            color:white;
+        }
+        .p{
+            color:white;
+            font-size:20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- Search model -->
+	<div class="search-model">
+		<div class="h-100 d-flex align-items-center justify-content-center">
+			<div class="search-close-switch">+</div>
+			<form class="search-model-form">
+				<input type="text" id="search-input" placeholder="Search here.....">
+			</form>
+		</div>
+	</div>
+	<!-- Search model end -->
+
+    <!-- Header Section Begin -->
+    <header class="header-section">
+        <div class="container-fluid">
+            <div class="inner-header">
+                <div class="logo">
+                    <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                </div>
+                <div class="header-right">
+                    <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
+                    <a href="{% url 'user_profile'%}">
+                        <img src="{% static 'img/icons/man.png'%}" alt="">
+                    </a>    
+                    <a href="#">
+                        <img src="{% static 'img/icons/bag.png'%}" alt="">
+                        
+                    </a>
+                </div>
+                <div class="user-access">
+                    {%if user.is_authenticated %}
+                        <a href="{% url 'logout' %}">Logout</a>
+                    {%else%}
+                        <a href="{% url 'register' %}">Register</a>
+                        <a href="{% url 'loginn' %}" class="in">Sign in</a>
+                    {%endif%}
+                </div>
+                <nav class="main-menu mobile-menu">
+                    <ul>
+                        <li><a class="active" href="{% url 'index'%}">Home</a></li>
+                        <li><a href="{%url 'shop'%}">Shop</a></li>
+                        <li><a href="{% url 'myorders' %}">Orders</a></li>
+                        <li><a href="./check-out.html">Blog</a></li>
+                        <li><a href="./contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <!-- Header Info Begin -->
+    
+    <!-- Header Info End -->
+    <!-- Header End -->
+
+    <!-- Hero Slider Begin -->
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img class="d-block w-100" src="{% static 'img/slider-1.jpg' %}" alt="Slider Image">
+              <div class="carousel-caption">
+                <h5 class="h">Treat Yourselves...</h5>
+                <p class="p">Checkout our new collections</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img class="d-block w-100" src="{% static 'img/slider-2.jpg' %}" alt="Slider Image">
+              <div class="carousel-caption">
+                <h5 class="h">Limited Deals</h5>
+                <p class="p">Have a look ath the offers</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img class="d-block w-100" src="{% static 'img/slider-3.jpg' %}" alt="Slider Image">
+              <div class="carousel-caption">
+                <h5 class="h">Trendy Collections</h5>
+                <p class="p">Shop now</p>
+              </div>
+            </div>
+          </div>
+          
+    <!-- Hero Slider End -->
+
+    <!-- Features Section Begin -->
+    <section class="features-section spad">
+        
+        <!-- Features Box -->
+        <div class="features-box">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="single-box-item first-box">
+                                    <img src="{% static 'img/f-box-1.jpg'%}" alt="">
+                                    <div class="box-text">
+                                        <span class="trend-year">Party</span>
+                                        <h2> Jackets</h2>
+                                        <span class="trend-alert"style="color:white">Trend Alert</span>
+                                        <a href="#" class="primary-btn" style="color:white">See More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="single-box-item second-box">
+                                    <img src="{% static 'img/f-box-2.jpg'%}" alt="">
+                                    <div class="box-text">
+                                        <span class="trend-year">2023 Trend</span>
+                                        <h2>Cardigans</h2>
+                                        <span class="trend-alert">Bold & Black</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-box-item large-box">
+                            <img src="{% static 'img/f-box-3.jpg'%}" alt="">
+                            <div class="box-text">
+                                <span class="trend-year" >Coat</span>
+                                <h2 style="color:white">Collection</h2>
+                                <div class="trend-alert">Trend Alert</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Features Section End -->
+
+    <!-- Latest Product Begin -->
+    <section class="latest-products spad">
+        <div class="container">
+            <div class="product-filter">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <div class="section-title">
+                            <h2>Latest Designs</h2>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="product-list">
+                <div class="col-lg-3 col-sm-6 mix all dresses bags">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-1.jpg'%}" alt=""></a>
+                            
+                        </figure>
+                        <div class="product-text">
+                            <h6>Green Dress with details</h6>
+                            <p>Rs.5122</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all dresses bags">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-2.jpg'%}" alt=""></a>
+                            
+                        </figure>
+                        <div class="product-text">
+                            <h6>Yellow Maxi Dress</h6>
+                            <p>4125</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all shoes accesories">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-3.jpg'%}" alt=""></a>
+                            
+                        </figure>
+                        <div class="product-text">
+                            <h6>One piece bodysuit</h6>
+                            <p>5319</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all shoes accesories">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-4.jpg'%}" alt=""></a>
+                            <div class="p-status popular">popular</div>
+                        </figure>
+                        <div class="product-text">
+                            <h6>Blue Dress with details</h6>
+                            <p>6335</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all dresses shoes">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-5.jpg'%}" alt=""></a>
+                            
+                        </figure>
+                        <div class="product-text">
+                            <h6>Green Dress with details</h6>
+                            <p>6222</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all accesories bags">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-6.jpg'%}" alt=""></a>
+                            
+                        </figure>
+                        <div class="product-text">
+                            <h6>Yellow Maxi Dress</h6>
+                            <p>Rs.5125</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all dresses bags">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-7.jpg'%}" alt=""></a>
+                        </figure>
+                        <div class="product-text">
+                            <h6>One piece bodysuit</h6>
+                            <p>Rs.4919</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mix all accesories bags">
+                    <div class="single-product-item">
+                        <figure>
+                            <a href="#"><img src="{% static 'img/products/img-8.jpg'%}" alt=""></a>
+                            <div class="p-status popular">popular</div>
+                        </figure>
+                        <div class="product-text">
+                            <h6>Blue Dress with details</h6>
+                            <p>Rs.5435</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Latest Product End -->
+
+    <!-- Lookbok Section Begin -->
+    
+    <!-- Lookbok Section End -->
+
+    <!-- Logo Section Begin -->
+   
+    <!-- Logo Section End -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer-section spad">
+        <div class="container">
+            
+            <div class="footer-widget">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <img style="width:80%;" src="{% static 'img/logo.png'%}">
+                            <ul>
+                                
+                                <li>Unleash your inner fashionista, browse and buy.</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>HELP</h4>
+                            <ul>
+                                <li>Contact Us</li>
+                                <li>Payment methods</li>
+                                <li>Delivery</li>
+                                <li>Returns and Exchanges</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>ABOUT</h4>
+                            <ul>
+                                <li>About Violet</li>
+                                <li>Careers</li>
+                                <li>Privacy Commitment</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>CONTACT US</h4>
+                            <ul>
+                                <li>email : violet@gmail.com</li>
+                                <li>phno. : 91-9188718824</li>
+                                <li>phno. : 91-6238596118</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="social-links-warp">
+			
+
+<div class="container text-center pt-5">
+                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            </div>
+
+
+		</div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'js/jquery.slicknav.js'%}"></script>
+    <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+    <script src="{% static 'js/jquery.nice-select.min.js'%}"></script>
+    <script src="{% static 'js/mixitup.min.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+</body>
+
+</html>

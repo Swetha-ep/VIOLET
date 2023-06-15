@@ -1,0 +1,207 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Yoga Studio Template">
+    <meta name="keywords" content="Yoga, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Violet | Categories</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/nice-select.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    
+    
+   <!-- Search model -->
+	<div class="search-model">
+		<div class="h-100 d-flex align-items-center justify-content-center">
+			<div class="search-close-switch">+</div>
+			<form class="search-model-form">
+				<input type="text" id="search-input" placeholder="Search here.....">
+			</form>
+		</div>
+	</div>
+	<!-- Search model end -->
+
+    <!-- Header Section Begin -->
+    <header class="header-section">
+        <div class="container-fluid">
+            <div class="inner-header">
+                <div class="logo">
+                    <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                </div>
+                <div class="header-right">
+                    <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
+                    <a href="{% url 'user_profile'%}"><img src="{% static 'img/icons/man.png'%}" alt=""></a>
+                    <a href="#">
+                        <img src="{% static 'img/icons/bag.png'%}" alt="">
+                        <span></span>
+                    </a>
+                </div>
+                <div class="user-access">
+                    {%if user.is_authenticated %}
+                        <a href="{% url 'logout' %}">Logout</a>
+                    {%else%}
+                        <a href="{% url 'register' %}">Register</a>
+                        <a href="{% url 'loginn' %}" class="in">Sign in</a>
+                    {%endif%}
+                </div>
+                <nav class="main-menu mobile-menu">
+                    <ul>
+                        <li><a href="{% url 'index'%}">Home</a></li>
+                        <li><a class="active" href="{% url 'shop'%}">Shop</a></li>
+                        <li><a href="#">Orders</a></li>
+                        <li><a href="./check-out.html">Blog</a></li>
+                        <li><a href="./contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <!-- Header Info Begin -->
+    
+    <!-- Header Info End -->
+    <!-- Header End -->
+
+    <!-- Page Add Section Begin -->
+    <section class="page-add">
+        <div class="container">
+            <div class="row">
+                
+                    <div class="page-breadcrumb">
+                        <h2>Shop by categories<span>.</span></h2>
+                        <a href="{% url 'index'%}">Home</a>
+                        <a class="active" href="#">Shop</a>
+                    </div>
+                
+                
+            </div>
+        </div>
+    </section>
+    <!-- Page Add Section End -->
+
+    <!-- Categories Page Section Begin -->
+    <div class="container">
+        <div class="row ">
+            <div class ="col-md-12 ">
+                <div class ="row">
+                    {%for item in categories%}
+                    <div class="col-md-4">
+                        <div class="card shadow card-body">
+                            <a href="{% url 'collectionsview' item.slug %}">
+                                <div class="card-body">
+                                    <div class="category-image">
+                                        <img src="{{item.cat_image.url}}" alt="Category image"/>
+                                    </div>
+                                    <br>
+                                    <h5 class="text-center">{{item.category_name}}</h5>
+                                    <br>
+                                    <p class="text-center">{{item.description}}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Categories Page Section End -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer-section spad">
+        <div class="container">
+            
+            <div class="footer-widget">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <img style="width:80%;" src="{% static 'img/logo.png'%}">
+                            <ul>
+                                
+                                <li>Unleash your inner fashionista, browse and buy.</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>HELP</h4>
+                            <ul>
+                                <li>Contact Us</li>
+                                <li>Payment methods</li>
+                                <li>Delivery</li>
+                                <li>Returns and Exchanges</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>ABOUT</h4>
+                            <ul>
+                                <li>About Violet</li>
+                                <li>Careers</li>
+                                <li>Privacy Commitment</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="single-footer-widget">
+                            <h4>CONTACT US</h4>
+                            <ul>
+                                <li>email : violet@gmail.com</li>
+                                <li>phno. : 91-9188718824</li>
+                                <li>phno. : 91-6238596118</li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="social-links-warp">
+			
+
+<div class="container text-center pt-5">
+                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            </div>
+
+
+		</div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'js/jquery.slicknav.js'%}"></script>
+    <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+    <script src="{% static 'js/jquery.nice-select.min.js'%}"></script>
+    <script src="{% static 'js/mixitup.min.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+</body>
+
+</html>

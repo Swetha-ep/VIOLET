@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{%load static%}
+     
+{% block content %}
+
+
+
+<div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-8 col-sm-6 mx-auto">
+        <div class="card shadow card-body">
+
+
+            {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>{{message}}</strong>
+                    </div>
+                    {% endfor %}
+            {%endif%}
+            <h4 class="text-center">Register</h4>
+            
+                
+
+                {% if message %}
+                <div class="alert alert-{{class}}">
+                    {{message}}
+                </div>
+                {% endif %}
+
+                <br>
+                {% if otp %}
+                <form method="POST">
+                    {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="text" placeholder="Email" class="form-control" name="email" value="{{usr.email}}" id="typeUserX">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="text" placeholder="OTP" class="form-control" name="otp" id="typeUserX">
+                    </div>
+                </div>
+                <button type="submit"class="btn btn-secondary">Submit</button>
+                </form>
+                {% else %}
+                <form method="POST">
+                    {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="text" placeholder="Name" class="form-control" name="username" id="typeUserX">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="text" placeholder="Email" class="form-control" name="email" id="typeUserX">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="password" placeholder="Password" class="form-control" name="pass" id="typePasswordX">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <input type="password" placeholder="Confirm Password" class="form-control" name="pass1" id="typePasswordX">
+                    </div>
+                </div>
+                <br>
+                <p>Already have account <a class="linkcolor" href="{% url 'loginn' %}">Login</a></p>
+                <button type="submit"class="btn btn-secondary">Submit</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
