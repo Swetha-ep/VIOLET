@@ -26,6 +26,8 @@
   <link href="{% static 'assets/vendor/quill/quill.bubble.css'%}" rel="stylesheet">
   <link href="{% static 'assets/vendor/remixicon/remixicon.css'%}" rel="stylesheet">
   <link href="{% static 'assets/vendor/simple-datatables/style.css'%}" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
 
   <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/style.css'%}" rel="stylesheet">
@@ -37,6 +39,7 @@
     .aa{
       color:black;
     }
+    
   </style>
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -233,15 +236,22 @@
 
   </header><!-- End Header -->
 
+
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="{% url 'dashboard'%}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'salesreport'%}">
+          <i class="bi bi-grid"></i>
+          <span>Sales Report</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
@@ -303,10 +313,48 @@
             </a>
           </li>
         </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Orders</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          
+          <li>
+            <a href="{%url 'orderstatus' %}" class="active">
+              <i class="bi bi-circle"></i><span>Order List</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Banners</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'addbanner'%}">
+              <i class="bi bi-circle"></i><span>Add banners</span>
+            </a>
+          </li>
+          <li>
+            <a href="{%url 'bannerlist' %}" class="active">
+              <i class="bi bi-circle"></i><span>Banner List</span>
+            </a>
+          </li>
+        </ul>
       </li><!-- End Tables Nav -->
 
      
   </aside><!-- End Sidebar-->
+
+
+  <!-- Button trigger modal -->
+  <!-- Button trigger modal -->
+  
+
+  <!-- Modal -->
+  
 
   <main id="main" class="main">
 
@@ -342,16 +390,41 @@
                       <td>{{user.email}}</td>
                       <td>
                           {% if user.is_active %}
-                              <a class="btn btn-dark" href="{% url 'block_user' user.id %}" role="button">Block user</a>
+                              <a class="btn btn-dark" role="button" data-toggle="modal" data-target="#exampleModal{{forloop.counter}}">Block user</a>
+                              <!-- ////////////////////////// -->
+                              <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Block User</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <p> You are trying to block an user. Are you sure to continue?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                     
+                                              <!-- Button to be displayed only once -->
+                                              <button style="color:white;"><a href="{% url 'block_user' user.id %}" class="btn btn-dark">Block User</a></button>
+                                          
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                              </div>
+
+                              <!-- ///////////////////////////// -->
                           {% else %}
                               Blocked
                           {% endif %}
-                      
                           <a class="btn btn-light" href="{% url 'unblock_user' user.id %}" role="button">Unblock user</a>
                       </td>
                   </tr>
-                  
                   {% endfor %}
+                 
       
                 </tbody>
               
@@ -366,6 +439,11 @@
     </section>
 
   </main><!-- End #main -->
+  {% comment %} <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+  </button> {% endcomment %}
+  
+  
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
@@ -392,6 +470,11 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
 
 </body>
 

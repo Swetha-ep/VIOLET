@@ -54,7 +54,7 @@
                         </a>    
                         <a href="{% url 'cart' %}">
                             <img src="{% static 'img/icons/bag.png'%}" alt="">
-                            <span>2</span>
+                           
                         </a>
                     </div>
                     <div class="user-access">
@@ -118,34 +118,37 @@
                                     <td class="price-col">Rs.{{item.product.selling_price | stringformat:'d'}}</td>
                                     
                                     <div class="product_id">
-                                        
-                                        {% csrf_token %}
-                                        {% if item.product.stock >= item.product_qty%}
-                                        <td class="form-group">
-                                            <input type="number" class="prod_qty form-control " id="qty-input" value="1" min="1" max="{{ item.product.stock }}">
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            {% if item.product.stock >= item.product_qty%}
+                                            <td class="form-group">
+                                                <input type="number" class="prod_qty form-control " id="qty-input" value="{{item.product_qty}}" min="1" max="{{ item.product.stock }}">
 
-                                        </td>
-                                            
+                                            </td>
+                                                
 
-                                        {% else %}
-                                            <h4>Out of Stock</h4>
-                                        {%endif%}
+                                            {% else %}
+                                                <h4>Out of Stock</h4>
+                                            {%endif%}
                                         
-                                        <td class="product-close">
-                                            <button class = "btn btn-dark delete-cart-item" data-product_id="{{item.product_id}}"><i class="fa fa-trash"></i>Remove</button>
-                                        </td>
+                                            <td class="product-close">
+                                                <button class = "btn btn-dark delete-cart-item" data-product_id="{{item.product_id}}"><i class="fa fa-trash"></i>Remove</button>
+                                            </td>
+                                        </form>
                                     </div> 
                                 </tr>
                                        
                                       
                             {% endfor%}
-                    {% else%}
-                        <h4>Your cart is empty</h4>
-                    {%endif%}
+                    
             
                         </tbody>
-                       
+                            {% else%}
+                            <h4>Your cart is empty</h4>
+                            <img src="{% static 'img/preview.png' %}" style="width:50%;">
+                        {%endif%}
                     </table>
+                    
                 </div>
                 <br>
                 
@@ -159,7 +162,8 @@
                                 
                                 <div class="row">
                                     <div class="col-lg-12 text-right">
-                                        <a href="{% url 'checkout' %}" class="primary-btn chechout-btn">Proceed to checkout</a>
+                                        {% comment %} <button type="button" class="btn btn-secondary me-3 float-start addToCartBtn" data-prod_id="{{product.id}}">Add to Cart<i class="fa fa-shopping-cart"></i></button> {% endcomment %}
+                                        <a class="primary-btn chechout-btn" href="{% url 'checkout'%}">Proceed to checkout</a>
                                     </div>
                                 </div>
                             </div>
@@ -258,14 +262,15 @@
                         csrfmiddlewaretoken: token
                     },
                     success: function(response) {
-                        alertify.success(response.status, function() {
-                            $('.cartdata').load(location.href + " .cartdata");
-                        });
+                        location.reload();
                     }
                       
                 });
             });
 
+        </script>
+        <script>
+            
         </script>
 
     </body>

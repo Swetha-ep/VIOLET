@@ -68,10 +68,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+    
 
 
 
-from django.db import models
+class Banner(models.Model):
+    image = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    title = models.CharField(max_length=150, null=False, blank=False)
+    description = models.TextField(max_length=500, null=False, blank=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+
+
 
 
 class User_otp(models.Model):

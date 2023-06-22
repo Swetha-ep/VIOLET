@@ -1,13 +1,17 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render
 from django.contrib import messages
 from app.models import Product,Category
+from .models import Profilee, Address
+
 from .models import Cartt, Wishlist,Order,OrderItem,Profile
 from app.views import *
 import random
 
 
+
+@login_required(login_url='loginn')
 def addtocart(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -36,9 +40,10 @@ def addtocart(request):
 @login_required(login_url='loginn')
 def cart(request):
     cart = Cartt.objects.filter(user=request.user)
-    
-    context = {'cart':cart}
-    return render(request, 'cart.html',context)
+
+    context = {'cart': cart}
+    return render(request, 'cart.html', context)
+
 
 
 
@@ -89,6 +94,7 @@ def deletewishitem(request):
 @login_required(login_url='loginn')
 def checkout(request):
     cartitems = Cartt.objects.filter(user=request.user)
+    
     total_price = 0
     for item in cartitems:
         total_price = total_price + item.product.selling_price * item.product_qty
@@ -135,6 +141,7 @@ def placeorder(request):
         neworder.pincode = request.POST.get('pincode')
 
         neworder.payment_mode = request.POST.get('payment_mode')
+        neworder.payment_id = request.POST.get('payment_id')
 
         cart = Cartt.objects.filter(user=request.user)
         cart_total_price = 0
@@ -162,31 +169,33 @@ def placeorder(request):
             orderproduct.save()
 
         Cartt.objects.filter(user = request.user).delete()
+        messages.success(request,"Your order has been placed successfully")
 
-        return JsonResponse({'status':"Your order has been placed successfully."})
+        payMode = request.POST.get('payment_mode')
+        if (payMode == "Paid by Razorpay"):
+            return JsonResponse({'status':"Your order has been placed successfully."})
 
     return redirect('/')
 
 
-@login_required(login_url='loginn')
-def razorpaycheck(request):
-    cart = Cartt.objects.filter(user=request.user)
-    total_price = 0
-    for item in cart:
-        total_price = total_price + item.product.selling_price * item.product_qty
 
-    return JsonResponse({
+@login_required
+def UserProfileView(request):
+    user = request.user
+    profile = Order.objects.filter(user=user)
+    return render(request, 'user_profile.html',{'profile' : profile})
 
-        'total_price' : total_price
-    })   
+
 
 @login_required(login_url='loginn')
 def myorders(request):
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
     context = {'orders':orders}
     return render(request,'myorders.html',context)
 
 
+@login_required(login_url='loginn')
 def orderview(request,t_no):
     order = Order.objects.filter(tracking_no = t_no).filter(user =request.user).first()
     orderitems = OrderItem.objects.filter(order = order)
@@ -195,3 +204,21 @@ def orderview(request,t_no):
         'orderItems':orderitems
     }
     return render(request,'orderview.html',context)
+
+
+
+
+@login_required(login_url='loginn')
+def razorpaycheck(request):
+    
+    cart = Cartt.objects.filter(user=request.user)
+    total_price = 0
+    for item in cart:
+        total_price = total_price + item.product.selling_price * item.product_qty
+
+    return JsonResponse({
+
+        'total_price' : total_price
+    }) 
+
+

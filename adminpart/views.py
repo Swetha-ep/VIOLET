@@ -1,30 +1,38 @@
+from ctypes import cast
+import datetime
 from venv import logger
 from autoslug import AutoSlugField
+from django.db.models import DateField
+from datetime import datetime,timedelta
+from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import Category, Product , Size
+from .models import Category, Product , Size  
+from cart.models import OrderItem, Order
 from .models import *
 from django.utils.text import slugify
 from django.views import View
 from .decorators import superuser_required
 from django.template.defaultfilters import slugify
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import BannerForm
+from app.models import Banner
+from django.core.paginator import Paginator
+from django.db.models.functions import TruncDay
+from django.db.models import Sum
+from django.db.models.functions import Cast
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 
 # Create your views here.
 
 @superuser_required
 def userlist(request):
-     users_data = User.objects.all()
+     users_data = User.objects.all().order_by('id')
      return render(request, 'userlist.html', {'users': users_data})
-
-
-def user_profile(request, user_id):
-    user_data = User.objects.get(id=user_id)   
-    return render(request, 'user_profile.html', {'user': user_data})
-
 
 @superuser_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -53,13 +61,20 @@ def logout(request):
 @superuser_required
 def productlist(request):
     products = Product.objects.all()
-    return render(request,'productlist.html',{'products':products})
+    paginator = Paginator(products,9)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    
+    return render(request,'productlist.html',{'products':paged_products})
 
 
 @superuser_required
 def categorylist(request):
     categories = Category.objects.all()
-    return render(request,'categorylist.html',{'categories':categories})
+    paginator = Paginator(categories,2)
+    page = request.GET.get('page')
+    paged_categories = paginator.get_page(page)
+    return render(request,'categorylist.html',{'categories':paged_categories})
 
 
 @superuser_required
@@ -243,3 +258,146 @@ def editproduct(request, slug):
         'sizes': sizes
     }
     return render(request, 'editproduct.html', context)
+
+
+
+@superuser_required
+def create_banner(request):
+    if request.method == 'POST':
+        form = BannerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('bannerlist')
+    else:
+        form = BannerForm()
+    
+    return render(request, 'addbanner.html', {'form': form})
+
+@superuser_required
+def edit_banner(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    
+    if request.method == 'POST':
+        form = BannerForm(request.POST, request.FILES, instance=banner)
+        if form.is_valid():
+            form.save()
+            return redirect('bannerlist')
+    else:
+        form = BannerForm(instance=banner)
+    
+    return render(request, 'editbanner.html', {'form': form, 'banner': banner})
+
+def delete_banner(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    
+    if request.method == 'POST':
+        banner.delete()
+        return redirect('bannerlist')
+    return redirect('bannerlist')
+
+@superuser_required   
+def banner_list(request):
+    banners = Banner.objects.all()
+    return render(request, 'bannerlist.html', {'banners': banners})
+
+@superuser_required
+def orderstatus(request):
+    orders = OrderItem.objects.all()
+    paginator = Paginator(orders,10)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    context = {'orders' : paged_products}
+    return render(request,'orderstatus.html',context)
+
+
+
+def update_status(request, order_item_id):
+    order = Order.objects.get(id=order_item_id)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        order.status = new_status
+        order.save()
+        # Redirect back to the same page or any desired page
+        return redirect('orderstatus')  # Replace 'order_list' with your URL name
+
+
+@superuser_required
+def dashboard(request):
+    
+
+    delivered_items = Order.objects.filter(status='Delivered')
+
+    revenue = 0
+    for item in delivered_items:
+        revenue += item.total_price
+
+    top_selling = OrderItem.objects.annotate(total_quantity=Sum('quantity')).order_by('-total_quantity').distinct()[:5]
+
+    recent_sale = OrderItem.objects.all().order_by('-id')[:5]
+
+    today = datetime.today()
+    date_range = 7
+
+    four_days_ago = today - timedelta(days=date_range)
+
+    orders = Order.objects.filter(created_at__gte=four_days_ago, created_at__lte=today)
+
+    sales_by_day = orders.annotate(day=TruncDay('created_at')).values('day').annotate(total_sales=Sum('total_price')).order_by('day')
+    sales_dates = Order.objects.annotate(sale_date=Cast('created_at', output_field=DateField())).values('sale_date').distinct()
+
+    context = {
+        'total_users':User.objects.count(),
+        'sales':OrderItem.objects.count(),
+        'revenue':revenue,
+        'top_selling':top_selling,
+        'recent_sales':recent_sale,
+        'sales_by_day':sales_by_day,
+    }
+    return render(request,'dashboard.html',context)
+
+from datetime import datetime
+
+def salesreport(request):
+    
+    context = {}
+    if request.method == 'POST':
+        start_date = request.POST.get('start-date')
+        end_date = request.POST.get('end-date')
+        
+        if start_date == '' or end_date == '':
+            messages.error(request, 'Give date first')
+            return redirect(salesreport)
+            
+        if start_date == end_date:
+            date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+            order_items = OrderItem.objects.filter(order__created_at__date=date_obj.date())
+            if order_items:
+                context.update(sales=order_items, s_date=start_date, e_date=end_date)
+                return render(request, 'salesreport.html', context)
+            else:
+                messages.error(request, 'No data found')
+            return redirect(salesreport)
+
+        order_items = OrderItem.objects.filter(order__created_at__date__gte=start_date, order__created_at__date__lte=end_date)
+
+        if order_items:
+            context.update(sales=order_items, s_date=start_date, e_date=end_date)
+        else:
+            messages.error(request, 'No data found')
+    return render(request, 'salesreport.html', context)
+
+import csv
+
+def export_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Expenses' + \
+        str(datetime.now()) + '.csv'
+
+    writer = csv.writer(response)
+    writer.writerow(['user', 'total_price', 'payment_mode', 'tracking_no'])
+
+    expenses = Order.objects.all()
+    for expense in expenses:
+        writer.writerow([expense.user, expense.total_price, expense.payment_mode,expense.tracking_no])
+
+    return response

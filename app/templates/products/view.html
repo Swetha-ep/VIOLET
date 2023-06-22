@@ -73,10 +73,12 @@
                         <a style="color:black;"href="{% url 'wishlist' %}">
                             <i class="fa fa-heart"></i>  
                         </a>
-                        <img src="{% static 'img/icons/man.png'%}" alt="">
+                        <a href="{% url 'user_profile'%}">
+                            <img src="{% static 'img/icons/man.png'%}" alt="">
+                        </a>    
                         <a href="{% url 'cart' %}">
                             <img src="{% static 'img/icons/bag.png'%}" alt="">
-                            <span>2</span>
+                            
                         </a>
                     </div>
                     <div class="user-access">
@@ -93,7 +95,7 @@
                             <li><a class="active" href="{%url 'shop' %}">Shop</a>
                                 
                             </li>
-                            <li><a href="./product-page.html">Orders</a></li>
+                            <li><a href="{% url 'myorders' %}">Orders</a></li>
                             <li><a href="./check-out.html">Blog</a></li>
                             <li><a href="./contact.html">Contact</a></li>
                         </ul>
@@ -197,6 +199,10 @@
                 </div>
             </div>
         </div>
+        <br>
+        <br>
+        <br>
+        <br>
         
         <!-- Categories Page Section End -->
 

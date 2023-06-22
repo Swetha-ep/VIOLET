@@ -1,5 +1,5 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from django.contrib.auth import login as loginn
@@ -19,7 +19,11 @@ from django.core.exceptions import ValidationError
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
-    return render(request, 'index.html')
+    products = Product.objects.all()[:8]
+    banner = Banner.objects.all()
+    
+
+    return render(request, 'index.html',{'products' : products,'banner' : banner})
 
 def shop(request):
     categories = Category.objects.filter(is_listed=False)
@@ -64,7 +68,7 @@ def productview(request, cate_slug, prod_slug):
 def loginn(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            return redirect('userlist')
+            return redirect('dashboard')
         else:
             return redirect('/')
 
@@ -80,7 +84,7 @@ def loginn(request):
             if user is not None:
                 if user.is_superuser:
                     auth.login(request,user)
-                    return redirect('userlist')
+                    return redirect('dashboard')
                 else:
                     auth.login(request,user)
                     return redirect('/')
@@ -89,7 +93,6 @@ def loginn(request):
                 return redirect('loginn')
 
     return render(request, 'login.html')
-
 
 
 def register(request):
@@ -147,22 +150,11 @@ def register(request):
                     )
                 messages.success(request, 'Please enter your OTP')
                 return render(request,'register.html',{'otp':True,'usr':user})
-                
-                
-
+    
     return render(request, 'register.html')
 
-from django.shortcuts import render
 
-
-def user_profile(request):
-    if request.user.is_authenticated:
-        user = request.user
-        username = user.username
-        email = user.email
-        return render(request, 'user_profile.html', {'username': username, 'email': email})
-    else:
-        return redirect('login')  
+  
 
 def logout(request):
     auth.logout(request)

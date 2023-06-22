@@ -54,7 +54,7 @@
                     </a>    
                     <a href="{% url 'cart' %}">
                         <img src="{% static 'img/icons/bag.png'%}" alt="">
-                        <span>2</span>
+                        
                     </a>
                 </div>
                 <div class="user-access">
@@ -136,6 +136,7 @@
                         {% endfor%}
                 {% else%}
                     <h4>Your wishlist is empty</h4>
+                    <img src="{% static 'img/preview.png' %}" style="width:50%;">
                 {%endif%}
         
                     </tbody>
@@ -235,9 +236,7 @@
                     csrfmiddlewaretoken: token
                 },
                 success: function(response) {
-                    alertify.success(response.status, function() {
-                        $('.wishdata').load(location.href + " .wishdata");
-                    });
+                    location.reload();
                 }
                   
             });
