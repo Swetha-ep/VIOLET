@@ -17,6 +17,7 @@ import re
 from django.core.exceptions import ValidationError
 
 
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     products = Product.objects.all()[:8]
@@ -154,7 +155,93 @@ def register(request):
     return render(request, 'register.html')
 
 
+def forgotpassword(request):
+    if request.method=='POST':
+        get_otp=request.POST.get('otp')
+        if get_otp:
+            get_email=request.POST.get('email')
+            usr=User.objects.get(email=get_email)
+            if int(get_otp)==User_otp.objects.filter(user=usr).last().otp:
+                user = User.objects.get(email = get_email)
+                password1 = request.POST.get('password1')
+                password2 = request.POST.get('password2')
+                Pass = ValidatePassword(password1)
+                if password1 == password2:
+                    if Pass is False:
+                        context ={
+                                'pre_otp':get_otp,
+                            }
+                        messages.info(request,'Enter Strong Password')
+                        return render(request,'forgot.html',context)
+                    user.set_password(password1)
+                    user.save()
+                    User_otp.objects.filter(user=usr).delete()
+                    return redirect('loginn')
+                else:
+                    messages.error(request,"Password dosn't match")
+            else:
+                messages.warning(request,f'You Entered a wrong OTP')
+                return render(request,'forgot.html',{'otp':True,'usr':usr})
+            
+        # User rigistration validation
+        else:
+            email = request.POST['email']
+            # null values checking
+            check = [email]
+            for values in check:
+                if values == '':
+                    context ={
+                       'pre_email':email,
+                    }
+                    return render(request,'forgot.html',context)
+                else:
+                    pass
+
+            result = validateEmail(email)
+            if result is False:
+                context ={
+                        'pre_email':email,
+                    }
+                messages.info(request,'Enter valid email')
+                return render(request,'forgot.html',context)
+            else:
+                pass
+            
+            if User.objects.filter(email = email).exists():
+                usr = User.objects.get(email=email) 
+                user_otp=random.randint(100000,999999)
+                User_otp.objects.create(user=usr,otp=user_otp)
+                mess=f'Hello\t{usr.username},\nYour OTP to verify your account for VIOLET is {user_otp}\nThanks!'
+                send_mail(
+                        "VIOLET : Verify your Email",
+                        mess,
+                        settings.EMAIL_HOST_USER,
+                        [usr.email],
+                        fail_silently=False
+                    )
+                return render(request,'forgot.html',{'otp':True,'usr':usr})
+            else:
+                messages.info(request,'You have not an account')
+                return render (request, 'forgot.html')
+    return render (request, 'forgot.html')
   
+
+def ValidatePassword(password):
+    from django.contrib.auth.password_validation import validate_password
+    try:
+        validate_password(password)
+        return True
+    except ValidationError:
+        return False
+
+ 
+def validateEmail(email):
+    from django.core.validators import validate_email
+    try:
+        validate_email(email)
+        return True
+    except ValidationError:
+        return False
 
 def logout(request):
     auth.logout(request)

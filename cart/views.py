@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render
 from django.contrib import messages
 from app.models import Product,Category
-from .models import Profilee, Address
+
 
 from .models import Cartt, Wishlist,Order,OrderItem,Profile
 from app.views import *
@@ -204,8 +204,6 @@ def orderview(request,t_no):
         'orderItems':orderitems
     }
     return render(request,'orderview.html',context)
-
-
 
 
 @login_required(login_url='loginn')

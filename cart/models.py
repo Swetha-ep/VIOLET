@@ -76,43 +76,24 @@ class OrderItem(models.Model):
 
 
     def __str__(self):
-        return '{} {}'.format(self.orderid, self.order.tracking_no)
+        return '{} {}'.format(self.order.id, self.order.tracking_no)
     
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     fname = models.CharField(max_length=150, null=False)
     lname = models.CharField(max_length=150, null=False)
-    phone = models.CharField(max_length=150, null=False)
+    phone = models.IntegerField(max_length=10, null=False)
     address = models.TextField(null=False)
     city = models.CharField(max_length=150, null=False)
     state = models.CharField(max_length=150, null=False)
     country = models.CharField(max_length=150, null=False)
-    pincode = models.CharField(max_length=150, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.user.usernamee
-    
-
-class Profilee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fname = models.CharField(max_length=150, null=False)
-    lname = models.CharField(max_length=150, null=False)
-    phone = models.CharField(max_length=150, null=False)
+    pincode = models.IntegerField(max_length=150, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
+    
 
-class Address(models.Model):
-    profilee = models.ForeignKey(Profilee, on_delete=models.CASCADE, related_name='addresses')
-    address = models.TextField(null=False)
-    city = models.CharField(max_length=150, null=False)
-    state = models.CharField(max_length=150, null=False)
-    country = models.CharField(max_length=150, null=False)
-    pincode = models.CharField(max_length=150, null=False)
-    is_default = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.address
+
