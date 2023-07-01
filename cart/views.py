@@ -45,6 +45,16 @@ def cart(request):
     return render(request, 'cart.html', context)
 
 
+def updatecart(request):
+    if request.method=='POST':
+        prod_id = request.POST.get('prod_id')
+        if(Cartt.objects.filter(user=request.user,product_id=prod_id)):
+            prod_qty = int(request.POST.get('prod_qty'))
+            cart = Cartt.objects.get(product_id=prod_id,user=request.user)
+            cart.product_qty = prod_qty
+            cart.save()
+            return JsonResponse({'status':"Updated Successfully"})
+    return redirect('/')
 
 
 def deletecartitem(request):
@@ -66,7 +76,7 @@ def wishlist(request):
 def addtowishlist(request):
     if request.method == "POST":
         if request.user.is_authenticated:
-            prod_id = int(request.POST.get('prod_id'))
+            prod_id = request.POST.get('prod_id')
             product_check = Product.objects.get(id = prod_id)
             if(product_check):
                 if(Wishlist.objects.filter(user=request.user, product_id=prod_id)):

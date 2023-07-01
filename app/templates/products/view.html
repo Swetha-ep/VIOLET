@@ -171,7 +171,7 @@
                                             
                                             <div class="form-group">
                                                 <label for="quantity">Quantity:</label>
-                                                <input type="number" class="prod_qty form-control " id="qty-input" value="1" min="1" max="{{ product.stock }}">
+                                                <input type="number" class="prod_qty form-control " id="qty-input" value="1" min="1" max="{{ product.stock }}" oninput="checkMaxStock(this)">
 
                                             </div>
                                         </form>
@@ -352,6 +352,18 @@
             });
             
         </script>
+
+        <script>
+            function checkMaxStock(input) {
+                var quantity = parseInt(input.value);
+                var maxStock = parseInt(input.getAttribute("max"));
+              
+                if (quantity === maxStock) {
+                  swal("No Stock Available", "There is no more stock available for this product.", "warning");
+                }
+              }
+              
+        </script>              
 
     </body>
 

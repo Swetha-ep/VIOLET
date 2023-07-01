@@ -118,15 +118,18 @@
                                     <td class="price-col">Rs.{{item.product.selling_price | stringformat:'d'}}</td>
                                     
                                     <div class="product_id">
-                                        <form method="POST">
+                                        
+                                        
                                             {% csrf_token %}
-                                            {% if item.product.stock >= item.product_qty%}
-                                            <td class="form-group">
-                                                <input type="number" class="prod_qty form-control " id="qty-input" value="{{item.product_qty}}" min="1" max="{{ item.product.stock }}">
-
-                                            </td>
-                                            
+                                            {% if item.product.stock >= item.product_qty %}
+                                                <td>
+                                                    <div class="product">
+                                                        <button data-prod_id="{{item.product.id}}" class="decrement-button ChangeQuantity">-</button>
+                                                        <input type="number" id="qty-input" class="form-control quantity-display " style="width:60px;" name="quantity" min="1" value="{{item.product_qty}}" max="{{item.product.stock}}">
+                                                        <button data-prod_id="{{item.product.id}}" class="increment-button ChangeQuantity">+</button>
+                                                    </div>
                                                 
+                                                </td>   
 
                                             {% else %}
                                                 <h4>Out of Stock</h4>
@@ -135,7 +138,7 @@
                                             <td class="product-close">
                                                 <button class = "btn btn-dark delete-cart-item" data-product_id="{{item.product_id}}"><i class="fa fa-trash"></i>Remove</button>
                                             </td>
-                                        </form>
+                                        
                                     </div> 
                                 </tr>
                                        
@@ -271,9 +274,64 @@
 
         </script>
         <script>
-            
+                // Get all the product elements
+// Get all the product elements
+const productElements = document.querySelectorAll('.product');
+
+// Loop through each product
+productElements.forEach((product) => {
+  const incrementButton = product.querySelector('.increment-button');
+  const decrementButton = product.querySelector('.decrement-button');
+  const quantityInput = product.querySelector('#qty-input');
+
+  // Add click event listeners for the increment and decrement buttons
+  incrementButton.addEventListener('click', incrementQuantity);
+  decrementButton.addEventListener('click', decrementQuantity);
+
+  // Function to handle the increment button click
+  // Function to handle the increment button click
+function incrementQuantity() {
+    let quantity = parseInt(quantityInput.value);
+    if (quantity < parseInt(quantityInput.getAttribute('max'))) {
+      quantity++;
+    }
+    quantityInput.value = quantity;
+  }
+  
+  // Function to handle the decrement button click
+  function decrementQuantity() {
+    let quantity = parseInt(quantityInput.value);
+    if (quantity > 1) {
+      quantity--;
+    }
+    quantityInput.value = quantity;
+  }
+  
+});
+
         </script>
 
+        <script>
+            $('.ChangeQuantity').click(function(e) {
+                e.preventDefault();
+                var product_qty = document.getElementById('qty-input').value;
+                var product_id = $(this).data('prod_id');
+                var token = $('input[name=csrfmiddlewaretoken]').val();
+                console.log(product_id, product_qty, 'daxo');
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'updatecart' %}",
+                    data: {
+                        'prod_id': product_id,
+                        'prod_qty': product_qty,
+                        'csrfmiddlewaretoken': token
+                    },
+                    success: function (response){
+                        alertify.success(response.status)
+                    }
+                });
+            });
+        </script>
     </body>
 
 </html>
