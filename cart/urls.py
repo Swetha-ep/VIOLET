@@ -21,5 +21,7 @@ urlpatterns = [
     path('my-orders', views.myorders,name="myorders"),
     path('view-order/<str:t_no>', views.orderview, name="orderview"),
 
+    path('apply_coupon',views.apply_coupon,name="apply_coupon"),
+
     
 ]

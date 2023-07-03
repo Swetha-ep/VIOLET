@@ -48,8 +48,16 @@ class Size(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Offer(models.Model):
+    offer_name = models.CharField(max_length=150)
+    discount = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.offer_name
 
 class Product(models.Model):
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     slug = AutoSlugField(populate_from='product_name', unique=True)
     product_name = models.CharField(max_length=200, unique=True)
@@ -61,7 +69,8 @@ class Product(models.Model):
     is_available = models.BooleanField(default=True)
     trending = models.BooleanField(default=False, help_text="0=default, 1=trending")
     tag = models.CharField(max_length=150, null=False, blank=False)
-    sizes = models.ManyToManyField('Size', related_name='products')  
+    sizes = models.ManyToManyField('Size', related_name='products') 
+    offer = models.ForeignKey(Offer, on_delete=models.SET_NULL, null=True) 
     
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -69,6 +78,10 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
     
+    def get_offer(self):
+        return self.selling_price - self.offer.discount
+    
+
 
 
 

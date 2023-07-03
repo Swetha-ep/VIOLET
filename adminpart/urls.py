@@ -20,7 +20,7 @@ urlpatterns = [
 
     path('addbanner', views.create_banner, name='addbanner'),
     path('editbanner/<int:banner_id>/', views.edit_banner, name='editbanner'),
-    path('deletebanner/<int:banner_id>/', views.delete_banner, name='deletebanner'),
+    path('deletebanner/<int:banner_id>/', views.deletebanner, name='deletebanner'),
     path('bannerlist/', views.banner_list, name='bannerlist'),
 
     path('orderstatus', views.orderstatus,name='orderstatus'),
@@ -29,6 +29,16 @@ urlpatterns = [
     path('dashboard',views.dashboard,name="dashboard"),
      path('salesreport/',views.salesreport, name="salesreport"),
     path('export_csv/',views.export_csv, name="export_csv"),
+
+    path('addcoupon', views.addcoupon, name='addcoupon'),
+    path('editcoupon/<int:coupon_id>/', views.editcoupon, name='editcoupon'),
+    path('deletecoupon/<int:coupon_id>/', views.deletecoupon, name='deletecoupon'),
+    path('couponlist/', views.couponlist, name='couponlist'),
+
+    path('addoffer', views.addoffer, name='addoffer'),
+    path('editoffer/<int:offer_id>/', views.editoffer, name='editoffer'),
+    path('deleteoffer/<int:offer_id>/', views.deleteoffer, name='deleteoffer'),
+    path('offerlist/', views.offerlist, name='offerlist'),
     
 
 ]

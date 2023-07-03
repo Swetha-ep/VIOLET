@@ -4,8 +4,9 @@ from django.shortcuts import redirect,render
 from django.contrib import messages
 from app.models import Product,Category
 
+from django.core.mail import send_mail
 
-from .models import Cartt, Wishlist,Order,OrderItem,Profile
+from .models import Cartt, Wishlist,Order,OrderItem,Profile,Coupon,CouponUsed
 from app.views import *
 import random
 
@@ -40,7 +41,8 @@ def addtocart(request):
 @login_required(login_url='loginn')
 def cart(request):
     cart = Cartt.objects.filter(user=request.user)
-
+   
+        
     context = {'cart': cart}
     return render(request, 'cart.html', context)
 
@@ -107,7 +109,10 @@ def checkout(request):
     
     total_price = 0
     for item in cartitems:
-        total_price = total_price + item.product.selling_price * item.product_qty
+        if item.product.offer == None:
+            total_price = total_price + item.product.selling_price * item.product_qty
+        else:
+            total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
 
     userprofile = Profile.objects.filter(user=request.user).first()
 
@@ -137,6 +142,7 @@ def placeorder(request):
             userprofile.country = request.POST.get('country')
             userprofile.pincode = request.POST.get('pincode')
             userprofile.save()
+            
 
         neworder = Order()
         neworder.user = request.user
@@ -149,14 +155,22 @@ def placeorder(request):
         neworder.state = request.POST.get('state')
         neworder.country = request.POST.get('country')
         neworder.pincode = request.POST.get('pincode')
-
         neworder.payment_mode = request.POST.get('payment_mode')
         neworder.payment_id = request.POST.get('payment_id')
 
+        new_price = request.POST.get('new_price')
+        coupon_code2 = request.POST.get('coupon_code2')
         cart = Cartt.objects.filter(user=request.user)
         cart_total_price = 0
         for item in cart:
-            cart_total_price = cart_total_price +item.product.selling_price * item.product_qty
+            if item.product.offer == None:
+
+                cart_total_price = cart_total_price +item.product.selling_price * item.product_qty
+            else:
+                cart_total_price = cart_total_price +item.product.selling_price * item.product_qty - item.product.offer.discount
+        if new_price:
+            print(new_price)
+            cart_total_price = new_price
 
         neworder.total_price = cart_total_price
         trackno = 'violet'+str(random.randint(1111111,9999999))
@@ -177,15 +191,27 @@ def placeorder(request):
             orderproduct = Product.objects.filter(id=item.product.id).first()
             orderproduct.stock= orderproduct.stock - item.product_qty
             orderproduct.save()
+        
+
 
         Cartt.objects.filter(user = request.user).delete()
+        current_user = request.user
+        email = current_user.email
+        mess=f'Hooray!\t{current_user.username},\nOrder confirmed! You are now part of the VIOLET family, where fashion is a way of life. Get ready to rock your style with confidence.\n We are thrilled to have you as part of our fashion-forward community!'
+        send_mail(
+                "VIOLET : Yay! Order Confirmed",
+                mess,
+                settings.EMAIL_HOST_USER,
+                [current_user.email],
+                fail_silently=False
+            )
         messages.success(request,"Your order has been placed successfully")
 
         payMode = request.POST.get('payment_mode')
         if (payMode == "Paid by Razorpay"):
             return JsonResponse({'status':"Your order has been placed successfully."})
 
-    return redirect('/')
+    return redirect('myorders')
 
 
 
@@ -218,15 +244,45 @@ def orderview(request,t_no):
 
 @login_required(login_url='loginn')
 def razorpaycheck(request):
-    
+    new_price = request.GET.get('new_price')
+    coupon_code2 = request.GET.get('coupon_code2')
     cart = Cartt.objects.filter(user=request.user)
     total_price = 0
     for item in cart:
-        total_price = total_price + item.product.selling_price * item.product_qty
+        if item.product.offer == None:
+            total_price = total_price + item.product.selling_price * item.product_qty
+        else:
+            total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
+    if new_price:
+        total_price = new_price
 
     return JsonResponse({
 
-        'total_price' : total_price
+        'total_price' : total_price,
+        'coupon_code2' : coupon_code2,
     }) 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='login')
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        order_total = request.POST.get('order_total')
+        print(coupon_code,order_total,"swethaaa")
+        order_total = float(order_total)
+        coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
+        print(coupon,"ansite")
 
+        if coupon:
+            coupon_used = CouponUsed.objects.filter(coupon_id=coupon.id)
+            if coupon_used:
+                return JsonResponse({'status': 'Coupon already used..'})
+            else:
+                if order_total > coupon.minimum_purchase:
+                    new_total = order_total - coupon.discount
+                    print(new_total)
+                    return JsonResponse({'status': 'Coupon Applied..!!','new_total': new_total,'coupon_discount': coupon.discount, 'coupon_code': coupon_code})
+                else:
+                   return JsonResponse({'status': 'You can not use this coupon..'}) 
+        else:
+            return JsonResponse({'status': 'Coupon does not exist..'})

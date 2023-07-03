@@ -12,6 +12,8 @@ $(document).ready(function() {
         var state = $("[name='state']").val()
         var country = $("[name='country']").val()
         var pincode = $("[name='pincode']").val()
+        var new_price = $("[name='new_price']").val()
+        var coupon_code2 = $("[name='coupon_code2']").val()
         var token = $("[name='csrfmiddlewaretoken']").val();
 
         if (fname == "" || lname == "" || email == "" || phone == "" || address == ""|| city == ""|| state == "" || country == ""|| pincode == "")
@@ -26,6 +28,11 @@ $(document).ready(function() {
             $.ajax({
                 method : "GET",
                 url : "/proceed-to-pay",
+                data : {
+                    "new_price" : new_price,
+                    "coupon_code2" : coupon_code2,
+                    csrfmiddlewaretoken : token
+                },
                 success : function(response){
                     console.log(response);
                     var options = {
@@ -48,6 +55,8 @@ $(document).ready(function() {
                                 "state" : state,
                                 "country" : country,
                                 "pincode" : pincode,
+                                "new_price" : new_price,
+                                "coupon_code2" : coupon_code2,
                                 "payment_mode" : "Paid by Razorpay",
                                 "payment_id" : responseb.razorpay_payment_id,
                                  csrfmiddlewaretoken : token

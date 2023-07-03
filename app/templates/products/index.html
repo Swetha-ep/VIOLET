@@ -133,8 +133,14 @@
                                     <br>
                                     <h6 class="text-center">{{item.product_name}}</h6>
                                     <br>
-                                    <span class="float-start aa">Rs.<s>{{item.original_price | stringformat:'d'}}</s></span>
-                                    <span class="float-end aa">Rs.{{item.selling_price | stringformat:'d'}}</span>
+                                    {% if item.offer %}
+                                        <span class="float-end aa">{{item.offer.offer_name}}</span>
+                                        <del class="text-danger ">Rs.{{item.selling_price | stringformat:'d'}}</del>&nbsp;
+                                        
+                                        <span class="float-end aa">Rs.{{item.get_offer}}</span>
+                                    {% else %}
+                                        <span class="float-end aa">Rs.{{item.selling_price | stringformat:'d'}}</span>
+                                    {% endif %}
                                 </div>
                             </a>
                         </div>

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from app.models import Product
@@ -12,8 +13,20 @@ class Cart(models.Model):
         return self.cart_id
     
 
-class CartItem(models.Model):
+
+
+class Cartt(models.Model):
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_qty = models.IntegerField(null=False, blank=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+
+   
+
+class CartItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default=None)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     is_active = models.BooleanField(default = True)
@@ -25,11 +38,6 @@ class CartItem(models.Model):
         return self.product
     
 
-class Cartt(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    product_qty = models.IntegerField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -66,6 +74,18 @@ class Order(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.id, self.tracking_no)
     
+class Coupon(models.Model):
+    coupon_code = models.CharField(max_length=50)
+    discount = models.BigIntegerField()
+    minimum_purchase = models.BigIntegerField()
+    is_active = models.BooleanField(default=False)
+
+    def str(self):
+        return self.coupon_code
+    
+class CouponUsed(models.Model):
+    order = models.ForeignKey(Order,on_delete=models.CASCADE, blank=True, null=True)
+    coupon = models.ForeignKey(Coupon,on_delete=models.CASCADE, blank=True, null=True)
 
 
 class OrderItem(models.Model):
@@ -83,12 +103,12 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     fname = models.CharField(max_length=150, null=False)
     lname = models.CharField(max_length=150, null=False)
-    phone = models.IntegerField(max_length=10, null=False)
+    phone = models.BigIntegerField(null=False)
     address = models.TextField(null=False)
     city = models.CharField(max_length=150, null=False)
     state = models.CharField(max_length=150, null=False)
     country = models.CharField(max_length=150, null=False)
-    pincode = models.IntegerField(max_length=150, null=False)
+    pincode = models.BigIntegerField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

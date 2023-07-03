@@ -137,7 +137,7 @@
                                     {%if product.tag%}
                                         <label class="product-viewtag">{{product.tag}} </label>
                                     {%endif%}
-                                    <img src="{{product.product_image.url}}" class="w-100" alt="image">
+                                    <img src="{{product.product_image.url}}" class="big_img w-100" alt="image">
                                 </div>
                                 <div class="col-md-8">
                                     <h4 class="mb-0">
@@ -147,8 +147,15 @@
                                         {% endif %}
                                     </h4>
                                     <hr>
-                                    <label class="me-3">Original Price: <s>Rs {{ product.original_price | stringformat:'d' }}</s></label>
-                                    <label class="fw-bold">Selling Price: Rs {{ product.selling_price | stringformat:'d' }}</label>
+                                    {% if product.offer %}
+                                        <span class="fw-bold">{{product.offer.offer_name}}</span>
+                                        <del class="text-danger ">Rs.{{product.selling_price | stringformat:'d'}}</del>&nbsp;
+                                        
+                                        <span class="fw-bold">Rs.{{product.get_offer}}</span>
+                                    {% else %}
+                                        <span class="float-end aa">Rs.{{product.selling_price | stringformat:'d'}}</span>
+                                    {% endif %}
+                                    
 
                                     
                                     <hr>
@@ -366,5 +373,14 @@
         </script>              
 
     </body>
+    <script src="{% static 'js/zoomsl.js' %}"></script>
+	<script src="{% static 'js/zoomsl.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+          $(".big_img").imagezoomsl({
+              zoomrange:[-4,-4]
+          })
+        })
+    </script>
 
 </html>
