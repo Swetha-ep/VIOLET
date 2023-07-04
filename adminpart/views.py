@@ -284,6 +284,7 @@ def create_banner(request):
     
     return render(request, 'addbanner.html', {'form': form})
 
+
 @superuser_required
 def edit_banner(request, banner_id):
     banner = get_object_or_404(Banner, id=banner_id)
@@ -298,6 +299,7 @@ def edit_banner(request, banner_id):
     
     return render(request, 'editbanner.html', {'form': form, 'banner': banner})
 
+
 def deletebanner(request, banner_id):
     banner =Banner.objects.get(id=banner_id)
     banner.delete()
@@ -307,10 +309,12 @@ def deletebanner(request, banner_id):
     #     return redirect('bannerlist')
     return redirect('bannerlist')
 
+
 @superuser_required   
 def banner_list(request):
     banners = Banner.objects.all()
     return render(request, 'bannerlist.html', {'banners': banners})
+
 
 @superuser_required
 def orderstatus(request):
@@ -335,7 +339,6 @@ def update_status(request, order_item_id):
 
 @superuser_required
 def dashboard(request):
-    
 
     delivered_items = Order.objects.filter(status='Delivered')
 

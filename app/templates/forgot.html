@@ -3,9 +3,10 @@
 
 
 <section class="vh-100">
-    <div class="container py-5 h-100" style="max-width:1500px;">
-      <div class="row d-flex align-items-center justify-content-center h-100">
-        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+  <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-8 col-sm-6 mx-auto">
+        <div class="card shadow card-body">
+          <h4 class="text-center">Forgot Password</h4><br>
           <form action="{% url 'forgotpassword' %}" method="POST">
             {% csrf_token %}
             <div class="form-outline ">
@@ -16,60 +17,62 @@
               </div>
               {% endfor %}
               {%endif%}
+              
 
-              <h1>Forgot Password</h1><br>
+                      
 
-              {% if otp %}
+                      {% if otp %}
 
-              <form class="row contact_form"  method="post" novalidate="novalidate">
-                  {% csrf_token %}
-                  <div class="col-md-12 form-group p_star">
-                      <input type="email" class="form-control" id="name" name="email" value="{{ usr.email }}"
-                          placeholder="Firstname" hidden >
-                  </div>
+                      <form class="row contact_form"  method="post" novalidate="novalidate">
+                          {% csrf_token %}
+                          <div class="col-md-12 form-group p_star">
+                              <input type="email" class="form-control" id="name" name="email" value="{{ usr.email }}"
+                                  placeholder="Firstname" hidden >
+                          </div>
 
-                  <div class="col-md-12 form-group p_star">
-                      <input type="number" class="form-control" id="name" name="otp" value=""
-                          placeholder="Enter Your OTP..!">
-                  </div>
+                          <div class="col-md-12 form-group p_star">
+                              <input type="number" class="form-control" id="name" name="otp" value=""
+                                  placeholder="Enter Your OTP..!">
+                          </div>
 
-                  <div class="col-md-12 form-group p_star">
-                      <input type="password" class="form-control" id="password" name="password1" value=""
-                          placeholder="Password">
-                  </div>
+                          <div class="col-md-12 form-group p_star">
+                              <input type="password" class="form-control" id="password" name="password1" value=""
+                                  placeholder="Password">
+                          </div>
 
-                  <div class="col-md-12 form-group p_star">
-                      <input type="password" class="form-control" id="password" name="password2" value=""
-                          placeholder="Confirm Password">
-                  </div>
+                          <div class="col-md-12 form-group p_star">
+                              <input type="password" class="form-control" id="password" name="password2" value=""
+                                  placeholder="Confirm Password">
+                          </div>
 
-                  <div class="col-md-12 form-group">
-                      <button type="submit" value="submit" class="btn btn-dark">Submit
-                      </button>  
-                  </div>
+                          <div class="col-md-12 form-group">
+                              <button type="submit" value="submit" class="btn btn-dark">Submit
+                              </button>  
+                          </div>
 
 
-              {% else %}
-              <form class="row contact_form"  method="post" novalidate="novalidate">
-                {% csrf_token %}
-                    <div class="col-md-12 form-group p_star">
-                      <input type="text" class="form-control" id="name" name="email" value=""
-                          placeholder="Enter Your Email">
+                      {% else %}
+                      <form class="row contact_form"  method="post" novalidate="novalidate">
+                        {% csrf_token %}
+                            <div class="col-md-12 form-group p_star">
+                              <input type="text" class="form-control" id="name" name="email" value=""
+                                  placeholder="Enter Your Email">
+                            </div>
+                            <br>
+                            <div class="col-md-12 form-group">
+                              <button type="submit"  value="submit" class="btn btn-secondary  btn-block">Get OTP
+                              </button>  
+                          </div>
+                      </form>
+                      {% endif %}                    
+                      
                     </div>
                     <br>
-                    <div class="col-md-12 form-group">
-                      <button type="submit" value="submit" class="btn btn-secondary btn-lg btn-block">Get OTP
-                      </button>  
-                  </div>
-              </form>
-              {% endif %}                    
-              
-            </div>
-            <br>
-              <div>
-                <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
-              </div>  
-          </form>  
+                      <div>
+                        <p class=" mt-4">Don't have account? <a class="linkcolor" href="{% url 'register' %}">Sign up</a></p>
+                      </div>  
+                  </form>  
+                
         </div>
       </div>
     </div>
