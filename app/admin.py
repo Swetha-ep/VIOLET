@@ -15,4 +15,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Product)
 
+admin.site.register(Banner)
+
 admin.site.register(Offer)

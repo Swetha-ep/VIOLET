@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     products = Product.objects.all()[:8]
-    banner = Banner.objects.all()
+    banner = Banner.objects.filter(is_active=True)
     
 
     return render(request, 'index.html',{'products' : products,'banner' : banner})
@@ -32,7 +32,8 @@ def shop(request):
 
 def collectionsview(request,slug):
     if Category.objects.filter(slug=slug).exists():
-        products = Product.objects.filter(category__slug=slug)
+        products = Product.objects.filter(category__slug=slug, is_available=False)
+
         print("products are",products)
         category = Category.objects.filter(slug=slug).first()
         context = {'products':products,'category':category}

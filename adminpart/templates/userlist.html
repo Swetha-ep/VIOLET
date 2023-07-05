@@ -284,7 +284,7 @@
                                       <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                                      
                                               <!-- Button to be displayed only once -->
-                                              <button style="color:white;"><a href="{% url 'block_user' user.id %}" class="btn btn-dark">Block User</a></button>
+                                              <button ><a href="{% url 'block_user' user.id %}" class="btn btn-dark">Block User</a></button>
                                           
                                     </div>
                                   </div>
@@ -296,7 +296,7 @@
                           {% else %}
                               Blocked
                           {% endif %}
-                          <a class="btn btn-light" href="{% url 'unblock_user' user.id %}" role="button">Unblock user</a>
+                          <a class="btn btn-outline-secondary" href="{% url 'unblock_user' user.id %}" role="button">Unblock user</a>
                       </td>
                   </tr>
                   {% endfor %}

@@ -20,8 +20,9 @@ urlpatterns = [
 
     path('my-orders', views.myorders,name="myorders"),
     path('view-order/<str:t_no>', views.orderview, name="orderview"),
-
     path('apply_coupon',views.apply_coupon,name="apply_coupon"),
+    path('ordercancel/<int:order_id>',views.ordercancel,name='ordercancel'),
+    path('order_return/<int:order_id>',views.order_return,name='order_return'), 
 
     
 ]

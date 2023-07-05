@@ -30,31 +30,22 @@
         
         
         <!-- Search model -->
-        <div class="search-model">
-            <div class="h-100 d-flex align-items-center justify-content-center">
-                <div class="search-close-switch">+</div>
-                <form class="search-model-form">
-                    <input type="text" id="search-input" placeholder="Search here.....">
-                </form>
-            </div>
-        </div>
-        <!-- Search model end -->
-
-        <!-- Header Section Begin -->
         <header class="header-section">
             <div class="container-fluid">
                 <div class="inner-header">
                     <div class="logo">
-                        <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                        <a href="{% url 'index' %}"><img src="{% static 'img/logo.png'%}" alt=""></a>
                     </div>
                     <div class="header-right">
-                        <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
+                        <a style="color:black;"href="{% url 'wishlist' %}">
+                            <i class="fa fa-heart"></i>  
+                        </a>
                         <a href="{% url 'user_profile'%}">
                             <img src="{% static 'img/icons/man.png'%}" alt="">
                         </a>    
-                        <a href="{% url 'cart' %}">
+                        <a class="active" href="{% url 'cart' %}">
                             <img src="{% static 'img/icons/bag.png'%}" alt="">
-                           
+                            
                         </a>
                     </div>
                     <div class="user-access">
@@ -67,11 +58,11 @@
                     </div>
                     <nav class="main-menu mobile-menu">
                         <ul>
-                            <li><a class="active" href="{% url 'index'%}">Home</a></li>
-                            <li><a href="{%url 'shop'%}">Shop</a></li>
-                            <li><a href="./product-page.html">About</a></li>
-                            <li><a href="./check-out.html">Blog</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li><a  href="{% url 'index'%}">Home</a></li>
+                            <li><a class="active" href="{%url 'shop'%}">Shop</a></li>
+                            <li><a href="{% url 'myorders' %}">Orders</a></li>
+                            <li><a href="{% url 'index'%}">Blog</a></li>
+                            <li><a href="{% url 'index'%}">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -117,10 +108,13 @@
                                     </td>
                                     <td class="price-col">
                                         {% if item.product.offer %}
-                                            Rs.{{item.product.get_offer}}
+                                            <span class="fw-bold">{{item.product.offer.offer_name}}</span>
+                                            <del class="text-danger ">Rs.{{item.product.selling_price | stringformat:'d'}}</del>&nbsp;
+                                            <span id="price-display">Rs.{{item.product.get_offer | stringformat:'d'}}</span>
                                         {% else %}
                                         
-                                            Rs.{{item.product.selling_price | stringformat:'d'}}
+                                            <span id="price-display">Rs.{{ item.product.selling_price | stringformat:'d' }}</span>
+
                                         {% endif %}
                                     </td>
                                     
@@ -132,7 +126,7 @@
                                                 <td>
                                                     <div class="product">
                                                         <button data-prod_id="{{item.product.id}}" class="decrement-button ChangeQuantity">-</button>
-                                                        <input type="number" id="qty-input" class="form-control quantity-display " style="width:60px;" name="quantity" min="1" value="{{item.product_qty}}" max="{{item.product.stock}}">
+                                                        <input type="number" id="qty-input" class="form-control quantity-display " style="width:60px;" name="quantity" min="1" value="{{item.product_qty}}" max="{{item.product.stock}}" oninput="checkMaxStock(this)" data-price="{% if item.product.offer %}{{item.product.get_offer}}{% else %}{{item.product.selling_price}}{% endif %}"  disabled>
                                                         <button data-prod_id="{{item.product.id}}" class="increment-button ChangeQuantity">+</button>
                                                     </div>
                                                 
@@ -164,6 +158,7 @@
                 <br>
                 
             </div>
+            {% if cart%}
             <div class="shopping-method">
                 <div class="container">
                     
@@ -183,6 +178,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
 
         <footer class="footer-section spad">
@@ -227,17 +223,20 @@
                             <div class="single-footer-widget">
                                 <h4>CONTACT US</h4>
                                 <ul>
-                                    <li>email : violet@gmail.com</li>
-                                    <li>phno. : 91-9188718824</li>
-                                    <li>phno. : 91-6238596118</li>
+                                    <li>email : violet.store.she@gmail.com</li>
+                                    <li>phno. : 91-91XXXXXXXX</li>
+                                    <li>phno. : 91-62XXXXXXXX</li>
                                     
                                 </ul>
+
                             </div>
                         </div>
+                        
                     </div>
+                    
                 </div>
             </div>
-            <div class="social-links-warp">
+            
                 
 
                 <div class="container text-center pt-5">
@@ -247,7 +246,7 @@
                 </div>
 
 
-            </div>
+           
         </footer>
         <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
         <script src="{% static 'js/bootstrap.min.js'%}"></script>
@@ -340,6 +339,42 @@ function incrementQuantity() {
                 });
             });
         </script>
+
+       
+        <script>
+            $(document).ready(function() {
+                $('.ChangeQuantity').click(function() {
+                    var inputField = $(this).siblings('input.quantity-display');
+                    var priceDisplay = $(this).closest('tr').find('.price-col');
+                    var basePrice = parseFloat(inputField.data('price'));
+                    var quantity = parseInt(inputField.val());
+                    var newPrice;
+            
+                    if (basePrice > 0) {
+                        newPrice = basePrice * quantity;
+                    } else {
+                        newPrice = parseFloat(priceDisplay.text().replace('Rs.', '')) * quantity;
+                    }
+                    
+                    priceDisplay.text('Rs.' + newPrice.toFixed(2));
+                });
+            });
+        </script>
+            
+        
+        <script>
+            function checkMaxStock(input) {
+                var quantity = parseInt(input.value);
+                var maxStock = parseInt(input.getAttribute("max"));
+                
+                if (quantity === maxStock) {
+                    swal("No Stock Available", "There is no more stock available for this product.", "warning");
+                }
+                }
+                
+        </script>  
+                
+        
     </body>
 
 </html>

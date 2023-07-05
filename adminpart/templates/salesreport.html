@@ -264,7 +264,15 @@
                         </div>
                     </form>
                     </div>
-
+                    {% if sales %}
+                    <form action="{% url 'salesreport' %}?download=1" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="start-date" value="{{ s_date }}">
+                        <input type="hidden" name="end-date" value="{{ e_date }}">
+                        <button type="submit" class="btn btn-secondary btn-sm mb-2">Download (PDF)</button>
+                    </form>
+                    
+                    {%endif%}
                     {% if sales %}
                     <table id="example" class="display nowrap mt-5" style="width:100%">
                     <thead>

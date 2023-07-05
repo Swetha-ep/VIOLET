@@ -26,12 +26,21 @@ from django.db.models.functions import TruncDay
 from django.db.models import Sum
 from django.db.models.functions import Cast
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-# from reportlab.platypus import SimpleDocTemplate, Table
-# from reportlab.lib import colors
-# from reportlab.lib.pagesizes import letter
-# from reportlab.platypus.tables import TableStyle  # noinspection PyUnusedLocal
+from reportlab.pdfgen import canvas
+from io import BytesIO
+import pandas as pd
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+import csv
 
 # Rest of your code
+from django.http import HttpResponse
+from django.template.loader import get_template
+from io import BytesIO
+# pylint: disable=import-error
+
+from reportlab.pdfgen import canvas
+
 
 
 
@@ -259,7 +268,7 @@ def editproduct(request, slug):
         product.save()
         
         
-        return redirect('productlist', {'message': 'Product updated successfully.'})
+        return redirect('productlist')
     
     categories = Category.objects.all()
     sizes = Size.objects.all()
@@ -299,15 +308,28 @@ def edit_banner(request, banner_id):
     
     return render(request, 'editbanner.html', {'form': form, 'banner': banner})
 
-
-def deletebanner(request, banner_id):
-    banner =Banner.objects.get(id=banner_id)
-    banner.delete()
+@superuser_required
+def list_banner(request, banner_id):
+    try:
+        banner = Banner.objects.get(id=banner_id)
+        banner.is_active = True
+        banner.save()
+        return redirect('bannerlist')  
+    except Banner.DoesNotExist:
+        return redirect('bannerlist') 
     
-    # if request.method == 'POST':
-    #     banner.delete()
-    #     return redirect('bannerlist')
-    return redirect('bannerlist')
+
+@superuser_required
+def unlist_banner(request, banner_id):
+    try:
+        banner = Banner.objects.get(id=banner_id)
+        banner.is_active = False
+        banner.save()
+        return redirect('bannerlist')  
+    except Banner.DoesNotExist:
+        return redirect('bannerlist')
+
+
 
 
 @superuser_required   
@@ -399,62 +421,53 @@ def salesreport(request):
             context.update(sales=order_items, s_date=start_date, e_date=end_date)
         else:
             messages.error(request, 'No data found')
-        #Check if the user requested a download
-    
+        # Check if the user requested a download
+    if request.GET.get('download') == '1':
+        # Generate the sales report data
+        start_date = request.POST.get('start-date')
+        end_date = request.POST.get('end-date')
+        order_items = OrderItem.objects.filter(order__created_at__date__gte=start_date, order__created_at__date__lte=end_date)
 
-    # if request.GET.get('download') == '1':
-    #     # Generate the sales report data
-    #     start_date = request.POST.get('start-date')
-    #     end_date = request.POST.get('end-date')
-    #     order_items = OrderItem.objects.filter(order__created_at__date__gte=start_date, order__created_at__date__lte=end_date)
+        # Create a list to store the table data
+        table_data = [['ID', 'Date', 'Customer', 'Product Name', 'Quantity', 'Total Price']]
+   
+        # Populate the table data with the relevant sales data
+        for item in order_items:
+           table_data.append([item.order.id, item.order.created_at.date(), item.order.user, item.product.product_name, item.quantity, item.order.total_price])
 
-    #     # Create a list to store the table data
-    #     table_data = [['ID', 'Date', 'Customer', 'Product Name', 'Quantity', 'Total Price']]
-    
-    #     # Populate the table data with the relevant sales data
-    #     for item in order_items:
-    #         table_data.append([
-    #             item.order.id,
-    #             item.order.created_at.date(),
-    #             item.order.address.customer,
-    #             item.product.product_name,
-    #             item.quantity,
-    #             item.order.total_price
-    #         ])
+        # Create a PDF document
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer)
+        elements = []
 
-    #     # Create a PDF document
-    #     buffer = BytesIO()
-    #     doc = SimpleDocTemplate(buffer, pagesize=letter)
-    #     elements = []
+        # Create the table and set its style
+        table = Table(table_data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
 
-    #     # Create the table and set its style
-    #     table = Table(table_data)
-    #     table.setStyle(TableStyle([
-    #         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-    #         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-    #         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-    #         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-    #         ('FONTSIZE', (0, 0), (-1, 0), 12),
-    #         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-    #         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-    #         ('GRID', (0, 0), (-1, -1), 1, colors.black),
-    #     ]))
+        # Add the table to the PDF document
+        elements.append(table)
 
-    #     # Add the table to the PDF document
-    #     elements.append(table)
+        # Build the PDF document
+        doc.build(elements)
 
-    #     # Build the PDF document
-    #     doc.build(elements)
-
-    #     # Set the appropriate response headers for downloading the PDF
-    #     buffer.seek(0)
-    #     response = HttpResponse(buffer, content_type='application/pdf')
-    #     response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
-
-    #     return response
-
+        # Set the appropriate response headers for downloading the PDF
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+        return response
         
     return render(request, 'salesreport.html', context)
+
+
 
 import csv
 

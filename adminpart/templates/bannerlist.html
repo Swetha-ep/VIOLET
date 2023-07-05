@@ -263,7 +263,7 @@
                           <td>
                           <!-- Display other banner details as needed -->
                           <a class="btn btn-secondary" href="{% url 'editbanner' banner.id %}" role="button">Edit</a>
-                          <a class="btn btn-light" href="{% url 'deletebanner' banner.id %}">Delete</a></td>
+                          {% comment %} <a class="btn btn-light" href="{% url 'deletebanner' banner.id %}">Delete</a></td> {% endcomment %}
                         
                     </tr>
                   {% endfor %}

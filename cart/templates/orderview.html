@@ -42,25 +42,16 @@
     
     
     <!-- Search model -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search model end -->
-
-    <!-- Header Section Begin -->
     <header class="header-section">
         <div class="container-fluid">
             <div class="inner-header">
                 <div class="logo">
-                    <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                    <a href="{% url 'index' %}"><img src="{% static 'img/logo.png'%}" alt=""></a>
                 </div>
                 <div class="header-right">
-                    <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
+                    <a style="color:black;"href="{% url 'wishlist' %}">
+                        <i class="fa fa-heart"></i>  
+                    </a>
                     <a href="{% url 'user_profile'%}">
                         <img src="{% static 'img/icons/man.png'%}" alt="">
                     </a>    
@@ -79,11 +70,11 @@
                 </div>
                 <nav class="main-menu mobile-menu">
                     <ul>
-                        <li><a class="active" href="{% url 'index'%}">Home</a></li>
+                        <li><a  href="{% url 'index'%}">Home</a></li>
                         <li><a href="{%url 'shop'%}">Shop</a></li>
-                        <li><a href="./product-page.html">About</a></li>
-                        <li><a href="./check-out.html">Blog</a></li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a class="active" href="{% url 'myorders' %}">Orders</a></li>
+                        <li><a href="{% url 'index'%}">Blog</a></li>
+                        <li><a href="{% url 'index'%}">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -96,7 +87,7 @@
                 <div class="col-lg-4">
                     <div class="page-breadcrumb">
                         <h2>Order View<span>.</span></h2>
-                        <a href="{% url 'myorders' %}" class="btn btn-light "> <i class ="fa fa-reply">Back</i></a>
+                        <a href="{% url 'myorders' %}" class="btn btn-light"> <i class ="fa fa-reply">Back</i></a>
                         
                     </div>
                 </div>
@@ -112,27 +103,28 @@
                             <div class = "col-md-6">
                                 <h4>Shipping details</h4>
                                 <hr>
-                                <label class="mt-2">First Name</label>
-                                <div class ="border p-1"> {{order.fname}}</div>
-                                <label class="mt-2">Last Name</label>
-                                <div class ="border p-1"> {{order.lname}}</div>
-                                <label class="mt-2">Email</label>
-                                <div class ="border p-1"> {{order.email}}</div>
-                                <label class="mt-2">Contact No.</label>
-                                <div class ="border p-1"> {{order.phone}}</div>
-                                <label class="mt-2">Address</label>
+                                <label class="mt-2"><b>First Name</b></label>
+                                <div class ="border p-1"> {{order.fname}}</div><br>
+                                <label class="mt-2"><b>Last Name</b></label>
+                                <div class ="border p-1"> {{order.lname}}</div><br>
+                                <label class="mt-2"><b>Email</b></label>
+                                <div class ="border p-1"> {{order.email}}</div><br>
+                                <label class="mt-2"><b>Contact No.</b></label>
+                                <div class ="border p-1"> {{order.phone}}</div><br>
+                                <label class="mt-2"><b>Address</b></label>
                                 <div class ="border p-1"> 
                                     {{order.address}}
                                     {{order.city}},
                                     {{order.state}},
                                     {{order.country}}
-                                </div>
-                                <label>Zip Code</label>
+                                </div><br>
+                                <label><b>Zip Code</b></label>
                                 <div class ="border p-1"> {{order.pincode}}</div>
                             </div>
 
                             <div class ="col-md-6">
                                 <h4>Order details</h4>
+                                <br>
                                 <table class ="table table-bordered">
                                     <thead>
                                         <tr>
@@ -149,7 +141,14 @@
                                         <tr>
                                             <td>{{item.product.product_name}}</td>
                                             <td>{{item.quantity}}</td>
-                                            <td>Rs.{{item.price}}</td>
+                                            <td>{% if item.product.offer %}
+                                                <span class="fw-bold"><b>{{item.product.offer.offer_name}}</b></span>
+                                                <del class="text-danger ">Rs.{{item.product.selling_price | stringformat:'d'}}</del>&nbsp;<br>
+                                                Rs.{{item.product.get_offer}} 
+                                            {% else %}
+                                                Rs.{{item.product.selling_price | stringformat:'d'}} 
+                                            {% endif %}
+                                            </td>
                                             <td>
                                                 <img src="{{item.product.product_image.url}}" height="50px" width="50px"  alt="Product Image">
                                             </td>
@@ -160,9 +159,9 @@
                                     </tbody>
                                 </table>
                                 <br>
-                                <h4>Grand Total : <span class="float-right">Rs.{{order.total_price}}</span></h4>
-                                <h6>Payment Mode : {{order.payment_mode}}</h6>
-                                <h6>Tracking No. : {{order.tracking_no}}</h6>
+                                <h4>Grand Total : <span class="float-right">Rs.{{order.total_price}}</span></h4><br>
+                                <h6 >Payment Mode : {{order.payment_mode}}</h6><br>
+                                <h6 >Tracking No. : {{order.tracking_no}}</h6>
 
                             </div>
                         </div>
@@ -172,7 +171,9 @@
             </div>
         </div>
     </div>
-
+    <br>
+    <br>
+    
 
 
 
@@ -219,17 +220,20 @@
                         <div class="single-footer-widget">
                             <h4>CONTACT US</h4>
                             <ul>
-                                <li>email : violet@gmail.com</li>
-                                <li>phno. : 91-9188718824</li>
-                                <li>phno. : 91-6238596118</li>
+                                <li>email : violet.store.she@gmail.com</li>
+                                <li>phno. : 91-91XXXXXXXX</li>
+                                <li>phno. : 91-62XXXXXXXX</li>
                                 
                             </ul>
+
                         </div>
                     </div>
+                    
                 </div>
+                
             </div>
         </div>
-        <div class="social-links-warp">
+        
             
 
             <div class="container text-center pt-5">
@@ -239,7 +243,7 @@
             </div>
 
 
-        </div>
+       
     </footer>
     <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
     <script src="{% static 'js/bootstrap.min.js'%}"></script>

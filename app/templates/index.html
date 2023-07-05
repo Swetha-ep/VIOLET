@@ -39,21 +39,9 @@
     </style>
 </head>
 
-<body>
+<body> 
     <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
     
-    <!-- Search model -->
-	<div class="search-model">
-		<div class="h-100 d-flex align-items-center justify-content-center">
-			<div class="search-close-switch">+</div>
-			<form class="search-model-form">
-				<input type="text" id="search-input" placeholder="Search here.....">
-			</form>
-		</div>
-	</div>
 	<!-- Search model end -->
 
     <!-- Header Section Begin -->
@@ -61,7 +49,7 @@
         <div class="container-fluid">
             <div class="inner-header">
                 <div class="logo">
-                    <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                    <a href="{% url 'index' %}"><img src="{% static 'img/logo.png'%}" alt=""></a>
                 </div>
                 <div class="header-right">
                     <a style="color:black;"href="{% url 'wishlist' %}">
@@ -88,8 +76,8 @@
                         <li><a class="active" href="{% url 'index'%}">Home</a></li>
                         <li><a href="{%url 'shop'%}">Shop</a></li>
                         <li><a href="{% url 'myorders' %}">Orders</a></li>
-                        <li><a href="./check-out.html">Blog</a></li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a href="{% url 'index'%}">Blog</a></li>
+                        <li><a href="{% url 'index'%}">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -135,7 +123,6 @@
 
     <!-- Features Section Begin -->
     <section class="features-section spad">
-        
         <!-- Features Box -->
         <div class="features-box">
             <div class="container">
@@ -150,7 +137,7 @@
                                     <div class="box-text">
                                         <span class="trend-year">Party</span>
                                         <h2>{{i.title}}</h2>
-                                        <span class="trend-alert"style="color:white">{{i.description}}</span>
+                                        <span class="trend-alert" style="color:white">{{i.description}}</span>
                                         <a href="#" class="primary-btn" style="color:white">See More</a>
                                     </div>   
                                 </div>
@@ -172,23 +159,49 @@
                             
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        {% if forloop.counter == 3 %}
-                        <div class="single-box-item large-box">
-                            <img src="{{i.image.url}}" alt="">
-                            <div class="box-text">
-                                <span class="trend-year" >Collections</span>
-                                <h2 style="color:white">{{i.title}}</h2>
-                                <div class="trend-alert">{{i.description}}</div>
-                            </div>
-                        </div>
-                        {%endif%}
-                    </div>
+                    
                     {% endfor %}
                 </div>
             </div>
         </div>
     </section>
+    <section>
+        <div class="features-box">
+            <div class="container">
+                <div class="row">
+                    <section>
+                        <div class="features-box">
+                            <div class="container">
+                                <div class="row">
+                                    {% for i in banner %}
+                                        {% if forloop.counter > 2 %}
+                                            <div class="col-lg-12">
+                                                <div class="single-box-item large-box full-screen-banner">
+                                                    <div class="box-text">
+                                                        <span class="trend-year">Offer Alert</span>
+                                                        <h2>{{ i.title }}</h2>
+                                                        <span class="trend-alert" style="color:white">{{ i.description }}</span>
+                                                        
+                                                    </div> 
+                                                    <img src="{{ i.image.url }}" alt="" style="width: 100%;">
+                                                    
+                                                </div>
+                                            </div>
+                                            
+                                        {% endif %}
+                                        
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
     <!-- Features Section End -->
 
     <!-- Latest Product Begin -->
@@ -214,7 +227,15 @@
                         </figure>
                         <div class="product-text">
                             <h6>{{ item.product_name }}</h6>
-                            <p>Rs.{{ item.selling_price }}</p>
+                            
+                                    {% if item.offer %}
+                                        <span class="float-end aa">{{item.offer.offer_name}}</span>
+                                        <del class="text-danger ">Rs.{{item.selling_price | stringformat:'d'}}</del>&nbsp;
+                                        
+                                        <span class="float-end aa"><b>Rs.{{item.get_offer}}</b></span>
+                                    {% else %}
+                                        <span class="float-end aa"><b>Rs.{{item.selling_price | stringformat:'d'}}</b></span>
+                                    {% endif %}
                         </div>
                     </div>
                 </div>
@@ -277,27 +298,30 @@
                         <div class="single-footer-widget">
                             <h4>CONTACT US</h4>
                             <ul>
-                                <li>email : violet@gmail.com</li>
-                                <li>phno. : 91-9188718824</li>
-                                <li>phno. : 91-6238596118</li>
+                                <li>email : violet.store.she@gmail.com</li>
+                                <li>phno. : 91-91XXXXXXXX</li>
+                                <li>phno. : 91-62XXXXXXXX</li>
                                 
                             </ul>
+
                         </div>
                     </div>
+                    
                 </div>
+                
             </div>
         </div>
-        <div class="social-links-warp">
-			
+        
+            
 
-<div class="container text-center pt-5">
+            <div class="container text-center pt-5">
                 <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
             </div>
 
 
-		</div>
+       
     </footer>
     <!-- Footer Section End -->
 

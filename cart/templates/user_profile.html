@@ -41,35 +41,20 @@
 
 <body>
     <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-    
-    <!-- Search model -->
-	<div class="search-model">
-		<div class="h-100 d-flex align-items-center justify-content-center">
-			<div class="search-close-switch">+</div>
-			<form class="search-model-form">
-				<input type="text" id="search-input" placeholder="Search here.....">
-			</form>
-		</div>
-	</div>
-	<!-- Search model end -->
-
-    <!-- Header Section Begin -->
     <header class="header-section">
         <div class="container-fluid">
             <div class="inner-header">
                 <div class="logo">
-                    <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                    <a href="{% url 'index' %}"><img src="{% static 'img/logo.png'%}" alt=""></a>
                 </div>
                 <div class="header-right">
-                    <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
-                    <a class ="active" href="{% url 'user_profile'%}">
+                    <a style="color:black;"href="{% url 'wishlist' %}">
+                        <i class="fa fa-heart"></i>  
+                    </a>
+                    <a class="active" href="{% url 'user_profile'%}">
                         <img src="{% static 'img/icons/man.png'%}" alt="">
                     </a>    
-
-                    <a href="#">
+                    <a href="{% url 'cart' %}">
                         <img src="{% static 'img/icons/bag.png'%}" alt="">
                         
                     </a>
@@ -86,22 +71,24 @@
                     <ul>
                         <li><a  href="{% url 'index'%}">Home</a></li>
                         <li><a href="{%url 'shop'%}">Shop</a></li>
-                        <li><a href="./product-page.html">About</a></li>
-                        <li><a href="./check-out.html">Blog</a></li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a href="{% url 'myorders' %}">Orders</a></li>
+                        <li><a href="{% url 'index'%}">Blog</a></li>
+                        <li><a href="{% url 'index'%}">Contact</a></li>
                     </ul>
                 </nav>
             </div>
         </div>
     </header>
 
-
+   
     <section class="section profile">
         <br>
         <br>
    
             <div class="container my-3">
-                    <h3>Profile</h3>
+                    
+                    
+
                     <br>
                     <div class = "col-md-12">
                         <div class ="card shadow">
@@ -111,12 +98,21 @@
                                         <h4>Personel details</h4>
                                         
                                         <br>
-                                        <img src="https://cdn2.iconfinder.com/data/icons/business-hr-and-recruitment/100/account_blank_face_dummy_human_mannequin_profile_user_-512.png" width="60px" height="60px" alt="Profile" class="rounded-circle"></div>
                                         
+                                        <img src="https://cdn2.iconfinder.com/data/icons/business-hr-and-recruitment/100/account_blank_face_dummy_human_mannequin_profile_user_-512.png" width="60px" height="60px" alt="Profile" class="rounded-circle"></div>
+                                        <br>
                                         
                                         <ul class="no-bullets">
+                                            
+                                            <h4><b>Wallet</b> : Rs. {{wallet.wallet}}</h4>
+                                            <hr>
+                                            
+                                            
+                                            <h5 style="color:black;"><b>Username : </b> {{user.username}}</h5>
+                                            <hr>
+                                            <br>
                                         {% for item in profile %}
-                                            {% if forloop.first %}
+                                            {% comment %} {% if forloop.first %} {% endcomment %}
                                                 <li><b>First Name </b>: {{item.fname}}</li>
                                                 <li><b>Last Name </b>: {{item.lname}}</li>
                                                 <li><b>Email </b>: {{item.user.email}}</li>
@@ -128,8 +124,7 @@
                                                 <li><b>Pincode </b>: {{item.pincode}}</li>
                                                 <br>
                                                 <li><a href="{%url 'checkout'%}" type="button" class="btn btn-secondary">Edit Address</a></li>
-                                                
-                                            {% endif %}
+                                            {% comment %} {% endif %} {% endcomment %}
 
                                         {% endfor %}
                                         </ul>
@@ -192,27 +187,30 @@
                     <div class="single-footer-widget">
                         <h4>CONTACT US</h4>
                         <ul>
-                            <li>email : violet@gmail.com</li>
-                            <li>phno. : 91-9188718824</li>
-                            <li>phno. : 91-6238596118</li>
+                            <li>email : violet.store.she@gmail.com</li>
+                            <li>phno. : 91-91XXXXXXXX</li>
+                            <li>phno. : 91-62XXXXXXXX</li>
                             
                         </ul>
+
                     </div>
                 </div>
+                
             </div>
+            
         </div>
     </div>
-    <div class="social-links-warp">
+    
         
 
-<div class="container text-center pt-5">
+        <div class="container text-center pt-5">
             <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
         </div>
 
 
-    </div>
+   
 </footer>
 <!-- Footer Section End -->
 

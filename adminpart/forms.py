@@ -5,7 +5,7 @@ from cart.models import Coupon
 class BannerForm(forms.ModelForm):
     class Meta:
         model = Banner
-        fields = ['image', 'title', 'description']
+        fields = ['image', 'title', 'description','is_active']
         
 
 class CouponForm(forms.ModelForm):

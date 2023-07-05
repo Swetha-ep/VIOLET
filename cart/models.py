@@ -115,5 +115,16 @@ class Profile(models.Model):
         return self.user.username
     
 
+class Orderreturn(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    comment = models.TextField(null=True)
+    
 
 
+class Wallet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    wallet = models.BigIntegerField(null=True)
+    
+    def _int_(self):
+        return self.wallet

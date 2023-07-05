@@ -42,25 +42,16 @@
         
         
         <!-- Search model -->
-        <div class="search-model">
-            <div class="h-100 d-flex align-items-center justify-content-center">
-                <div class="search-close-switch">+</div>
-                <form class="search-model-form">
-                    <input type="text" id="search-input" placeholder="Search here.....">
-                </form>
-            </div>
-        </div>
-        <!-- Search model end -->
-
-        <!-- Header Section Begin -->
         <header class="header-section">
             <div class="container-fluid">
                 <div class="inner-header">
                     <div class="logo">
-                        <a href="./index.html"><img src="{% static 'img/logo.png'%}" alt=""></a>
+                        <a href="{% url 'index' %}"><img src="{% static 'img/logo.png'%}" alt=""></a>
                     </div>
                     <div class="header-right">
-                        <img src="{% static 'img/icons/search.png'%}" alt="" class="search-trigger">
+                        <a style="color:black;"href="{% url 'wishlist' %}">
+                            <i class="fa fa-heart"></i>  
+                        </a>
                         <a href="{% url 'user_profile'%}">
                             <img src="{% static 'img/icons/man.png'%}" alt="">
                         </a>    
@@ -79,11 +70,11 @@
                     </div>
                     <nav class="main-menu mobile-menu">
                         <ul>
-                            <li><a class="active" href="{% url 'index'%}">Home</a></li>
+                            <li><a  href="{% url 'index'%}">Home</a></li>
                             <li><a href="{%url 'shop'%}">Shop</a></li>
-                            <li><a href="./product-page.html">About</a></li>
-                            <li><a href="./check-out.html">Blog</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li><a class="active" href="{% url 'myorders' %}">Orders</a></li>
+                            <li><a href="{% url 'index'%}">Blog</a></li>
+                            <li><a href="{% url 'index'%}">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -124,6 +115,7 @@
                                         <th>Total Price</th>
                                         <th>Status</th>
                                         <th>Action</th>
+                                        <th>View</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,7 +124,22 @@
                                     <tr>
                                         <td>{{item.created_at}}</td>
                                         <td>{{item.tracking_no}}</td>
-                                        <td>{{item.total_price}}</td>
+                                        <td>Rs.{{item.total_price}}</td>
+                                        <td>
+                                            {%if item.status == 'Delivered' %}
+                                              <form method="POST" action="{% url 'order_return' item.id %}">
+                                              {% csrf_token %}
+                                              <button type="button" class="tracking-button btn-sm  btn btn-outline-secondary" data-toggle="modal" data-target="#returnModal">Return Order</button>
+                                            </form>
+                                           {%else%}
+                                            <form method="post" action="{% url 'ordercancel' item.id %}">
+                                            {% csrf_token %}
+                                            {% if item.status != "Return" %}
+                                                <button type="submit" class="tracking-button btn-sm btn btn-dark">Cancel Order</button>  
+                                            {% endif %}
+                                            </form>
+                                            {%endif%}
+                                        </td>
                                         <td>{{item.status}}</td>
                                         <td>
                                             <a href="{% url 'orderview' item.tracking_no %}" class="btn btn-light">View</a></td>
@@ -148,72 +155,102 @@
         </div>
 
 
+<!-- The modal order return -->
+{%for item in orders%}
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Add your form fields for return issue and image upload here -->
+          <form method="POST" action="{% url 'order_return' item.id %}">
+            {% csrf_token %}
+            <!-- Add your form fields here -->
+            <div class="form-group">
+              <label for="comment">Return Issue</label>
+              <textarea class="form-control" id="comment" name=" comment" rows="4" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary">Submit Return</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endfor%}
 
-
-        <footer class="footer-section spad">
-            <div class="container">
-                
-                <div class="footer-widget">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6">
-                            <div class="single-footer-widget">
-                                <img style="width:80%;" src="{% static 'img/logo.png'%}">
-                                <ul>
-                                    
-                                    <li>Unleash your inner fashionista, browse and buy.</li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                            <div class="single-footer-widget">
-                                <h4>HELP</h4>
-                                <ul>
-                                    <li>Contact Us</li>
-                                    <li>Payment methods</li>
-                                    <li>Delivery</li>
-                                    <li>Returns and Exchanges</li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                            <div class="single-footer-widget">
-                                <h4>ABOUT</h4>
-                                <ul>
-                                    <li>About Violet</li>
-                                    <li>Careers</li>
-                                    <li>Privacy Commitment</li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                            <div class="single-footer-widget">
-                                <h4>CONTACT US</h4>
-                                <ul>
-                                    <li>email : violet@gmail.com</li>
-                                    <li>phno. : 91-9188718824</li>
-                                    <li>phno. : 91-6238596118</li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
+  <footer class="footer-section spad">
+    <div class="container">
+        
+        <div class="footer-widget">
+            <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single-footer-widget">
+                        <img style="width:80%;" src="{% static 'img/logo.png'%}">
+                        <ul>
+                            
+                            <li>Unleash your inner fashionista, browse and buy.</li>
+                            
+                        </ul>
                     </div>
                 </div>
-            </div>
-            <div class="social-links-warp">
-                
-
-                <div class="container text-center pt-5">
-                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single-footer-widget">
+                        <h4>HELP</h4>
+                        <ul>
+                            <li>Contact Us</li>
+                            <li>Payment methods</li>
+                            <li>Delivery</li>
+                            <li>Returns and Exchanges</li>
+                            
+                        </ul>
+                    </div>
                 </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single-footer-widget">
+                        <h4>ABOUT</h4>
+                        <ul>
+                            <li>About Violet</li>
+                            <li>Careers</li>
+                            <li>Privacy Commitment</li>
+                            
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single-footer-widget">
+                        <h4>CONTACT US</h4>
+                        <ul>
+                            <li>email : violet.store.she@gmail.com</li>
+                            <li>phno. : 91-91XXXXXXXX</li>
+                            <li>phno. : 91-62XXXXXXXX</li>
+                            
+                        </ul>
 
-
+                    </div>
+                </div>
+                
             </div>
-        </footer>
+            
+        </div>
+    </div>
+    
+        
+
+        <div class="container text-center pt-5">
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+        </div>
+
+
+   
+</footer>
         <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
         <script src="{% static 'js/bootstrap.min.js'%}"></script>
         <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>

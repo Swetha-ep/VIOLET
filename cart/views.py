@@ -6,7 +6,7 @@ from app.models import Product,Category
 
 from django.core.mail import send_mail
 
-from .models import Cartt, Wishlist,Order,OrderItem,Profile,Coupon,CouponUsed
+from .models import Cartt, Wishlist,Order,OrderItem,Profile,Coupon,CouponUsed,Wallet,Orderreturn
 from app.views import *
 import random
 
@@ -217,9 +217,9 @@ def placeorder(request):
 
 @login_required
 def UserProfileView(request):
-    user = request.user
-    profile = Order.objects.filter(user=user)
-    return render(request, 'user_profile.html',{'profile' : profile})
+    profile = Profile.objects.filter(user=request.user)
+    wallet = Wallet.objects.get(user= request.user)
+    return render(request, 'user_profile.html', {'profile' : profile, 'wallet' : wallet})
 
 
 
@@ -227,8 +227,10 @@ def UserProfileView(request):
 def myorders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
 
-    context = {'orders':orders}
-    return render(request,'myorders.html',context)
+    context = {
+        'orders':orders
+    }
+    return render(request,'myorders.html', context)
 
 
 @login_required(login_url='loginn')
@@ -286,3 +288,68 @@ def apply_coupon(request):
                    return JsonResponse({'status': 'You can not use this coupon..'}) 
         else:
             return JsonResponse({'status': 'Coupon does not exist..'})
+
+
+
+def ordercancel(request, order_id):
+    order_item = OrderItem.objects.filter(order__id=order_id)
+    for order_item in order_item:
+        qty = order_item.quantity
+        pid = order_item.product.id
+        
+        
+        if order_item.order.payment_mode == 'Paid by Razorpay':
+            order = Order.objects.get(id=order_id)
+            total_price = order.total_price
+
+            try:
+                wallet = Wallet.objects.get(user=request.user)
+                wallet.wallet += total_price
+                wallet.save()
+            except Wallet.DoesNotExist:
+                wallet = Wallet.objects.create(user=request.user, wallet=total_price)
+        
+        if order_item.order.status == 'cancelled':
+            messages.error(request, 'Order is already cancelled')
+        
+        else:
+            order_item.order.status = "cancelled"
+            order_item.quantity = 0
+            order_item.save()
+            order_item.order.save()
+            messages.success(request, 'Order has been cancelled successfully')
+            
+    product = Product.objects.filter(id=pid).first()
+    product.stock =product.stock + qty
+    product.save()
+    return redirect('myorders')
+
+def order_return(request, order_id):
+    order_item = OrderItem.objects.filter(order__id=order_id)
+    
+    try:
+        order_return = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        messages.error(request, 'order_not_found')
+        return redirect('myorders')
+    
+    for order_item in order_item:
+        if order_item.order.status == 'Return':
+                messages.error(request, 'Order is already cancelled')
+        else:
+                order_item.order.status = "Return"
+                
+                
+                order_item.order.save()
+                messages.success(request, 'Order has been cancelled successfully')
+
+    if request.method == 'POST':
+        comment = request.POST.getlist('comment')
+        
+        order_return = Orderreturn.objects.create(
+            user=request.user,
+            order=order_return,
+            comment=comment,
+            
+        )
+    return redirect('myorders')
