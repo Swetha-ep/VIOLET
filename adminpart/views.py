@@ -32,7 +32,7 @@ import pandas as pd
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 import csv
-
+from datetime import datetime
 # Rest of your code
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -46,11 +46,15 @@ from reportlab.pdfgen import canvas
 
 # Create your views here.
 
+# <----------------------------------------user management------------------------------------------------->
+# user list
 @superuser_required
 def userlist(request):
      users_data = User.objects.all().order_by('id')
      return render(request, 'userlist.html', {'users': users_data})
 
+
+# block user
 @superuser_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
@@ -61,6 +65,7 @@ def block_user(request,user_id):
     return redirect('userlist')
 
 
+# unblock user
 @superuser_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
@@ -71,10 +76,13 @@ def unblock_user(request,user_id):
     return redirect('userlist')
 
 
+# logout
 def logout(request):
     return redirect('loginn')
 
 
+# <----------------------------------------------------product management-------------------------------------->
+# product list
 @superuser_required
 def productlist(request):
     products = Product.objects.all()
@@ -84,16 +92,7 @@ def productlist(request):
     
     return render(request,'productlist.html',{'products':paged_products})
 
-
-@superuser_required
-def categorylist(request):
-    categories = Category.objects.all()
-    paginator = Paginator(categories,2)
-    page = request.GET.get('page')
-    paged_categories = paginator.get_page(page)
-    return render(request,'categorylist.html',{'categories':paged_categories})
-
-
+# list products
 @superuser_required
 def list_product(request, product_name):
     try:
@@ -105,6 +104,7 @@ def list_product(request, product_name):
         return redirect('product_list') 
     
 
+# unlist products
 @superuser_required
 def unlist_product(request, product_name):
     try:
@@ -116,77 +116,7 @@ def unlist_product(request, product_name):
         return redirect('product_list')
 
 
-@superuser_required
-def addcategory(request):
-    if request.method == 'POST':
-        category_name = request.POST.get('category_name')
-        cat_image = request.FILES.get('cat_image')
-        description = request.POST.get('description')
-        is_listed = request.POST.get('is_listed', False)
-
-        # Generate the slug automatically
-        slug = slugify(category_name)
-
-        if not category_name:
-            messages.error(request, "Fields can't be blank!!!")
-            return redirect('addcategory')
-
-        if Category.objects.filter(slug=slug).exists():
-            messages.error(request, 'Category already exists')
-            return redirect('addcategory')
-
-        category = Category.objects.create(
-            slug=slug,
-            category_name=category_name,
-            cat_image=cat_image,
-            description=description,
-            is_listed=True if is_listed == 'True' else False,
-        )
-        
-        return redirect('categorylist',{'message': 'Category created successfully'})
-
-    return render(request, 'addcategory.html')
-
-
-
-@superuser_required
-def editcategory(request, slug):
-    category = Category.objects.get(slug=slug)
-    
-    if request.method == 'POST':
-        category_name = request.POST.get('category_name')
-        cat_image = request.FILES.get('cat_image')
-        description = request.POST.get('description')
-        is_listed = request.POST.get('is_listed') == 'on' 
-        
-        category.category_name = category_name
-        category.cat_image = cat_image
-        category.description = description
-        category.is_listed = is_listed
-        
-        category.save()
-        
-        return redirect('categorylist',{'message': 'Category updated successfully'})
-    
-    return render(request, 'editcategory.html', {'category': category})
-
-
- 
-def searchcat(request):
-    if request.method =='POST':
-        searched = request.POST['searchvalue']
-        
-        category = Category.objects.filter(category_name = searched)
-
-        if category.exists():
-            return render(request,'searchcat.html',{'searched':searched,'category':category})    
-        else:
-           
-            return redirect('categorylist',{'message': 'Category does not exist'})
-        
-    return render(request,'searchcat.html')
-
-
+# add products
 @superuser_required
 def addproduct(request):
     if request.method == 'POST':
@@ -232,6 +162,8 @@ def addproduct(request):
     return render(request, 'addproduct.html', {'categories': categories, 'sizes': sizes, 'offer' : offer})
 
 
+
+# edit products
 @superuser_required
 def editproduct(request, slug):
     product = Product.objects.get(slug=slug)
@@ -278,9 +210,96 @@ def editproduct(request, slug):
         'sizes': sizes
     }
     return render(request, 'editproduct.html', context)
+# <-----------------------------------------------------endofproducts------------------------------------------->
 
 
+# <---------------------------------------------------category management-------------------------------------->
+# category list
+@superuser_required
+def categorylist(request):
+    categories = Category.objects.all()
+    paginator = Paginator(categories,2)
+    page = request.GET.get('page')
+    paged_categories = paginator.get_page(page)
+    return render(request,'categorylist.html',{'categories':paged_categories})
 
+
+# add category
+@superuser_required
+def addcategory(request):
+    if request.method == 'POST':
+        category_name = request.POST.get('category_name')
+        cat_image = request.FILES.get('cat_image')
+        description = request.POST.get('description')
+        is_listed = request.POST.get('is_listed', False)
+
+        # Generate the slug automatically
+        slug = slugify(category_name)
+
+        if not category_name:
+            messages.error(request, "Fields can't be blank!!!")
+            return redirect('addcategory')
+
+        if Category.objects.filter(slug=slug).exists():
+            messages.error(request, 'Category already exists')
+            return redirect('addcategory')
+
+        category = Category.objects.create(
+            slug=slug,
+            category_name=category_name,
+            cat_image=cat_image,
+            description=description,
+            is_listed=True if is_listed == 'True' else False,
+        )
+        
+        return redirect('categorylist',{'message': 'Category created successfully'})
+
+    return render(request, 'addcategory.html')
+
+
+# edit category
+@superuser_required
+def editcategory(request, slug):
+    category = Category.objects.get(slug=slug)
+    
+    if request.method == 'POST':
+        category_name = request.POST.get('category_name')
+        cat_image = request.FILES.get('cat_image')
+        description = request.POST.get('description')
+        is_listed = request.POST.get('is_listed') == 'on' 
+        
+        category.category_name = category_name
+        category.cat_image = cat_image
+        category.description = description
+        category.is_listed = is_listed
+        
+        category.save()
+        
+        return redirect('categorylist',{'message': 'Category updated successfully'})
+    
+    return render(request, 'editcategory.html', {'category': category})
+
+
+#  search category
+def searchcat(request):
+    if request.method =='POST':
+        searched = request.POST['searchvalue']
+        
+        category = Category.objects.filter(category_name = searched)
+
+        if category.exists():
+            return render(request,'searchcat.html',{'searched':searched,'category':category})    
+        else:
+           
+            return redirect('categorylist',{'message': 'Category does not exist'})
+        
+    return render(request,'searchcat.html')
+
+# <--------------------------------------------------------endofcategory---------------------------------------------->
+
+# <------------------------------------------------------banner management-------------------------------------------->
+
+# create banner
 @superuser_required
 def create_banner(request):
     if request.method == 'POST':
@@ -294,6 +313,7 @@ def create_banner(request):
     return render(request, 'addbanner.html', {'form': form})
 
 
+# edit banner
 @superuser_required
 def edit_banner(request, banner_id):
     banner = get_object_or_404(Banner, id=banner_id)
@@ -308,6 +328,8 @@ def edit_banner(request, banner_id):
     
     return render(request, 'editbanner.html', {'form': form, 'banner': banner})
 
+
+# list banner
 @superuser_required
 def list_banner(request, banner_id):
     try:
@@ -319,6 +341,7 @@ def list_banner(request, banner_id):
         return redirect('bannerlist') 
     
 
+# unlist banner
 @superuser_required
 def unlist_banner(request, banner_id):
     try:
@@ -330,14 +353,18 @@ def unlist_banner(request, banner_id):
         return redirect('bannerlist')
 
 
-
-
+# banner list
 @superuser_required   
 def banner_list(request):
     banners = Banner.objects.all()
     return render(request, 'bannerlist.html', {'banners': banners})
 
+# <--------------------------------------------------------endofbanner---------------------------------------------->
 
+
+# <---------------------------------------------------------order management---------------------------------------->
+
+# order status
 @superuser_required
 def orderstatus(request):
     orders = OrderItem.objects.all()
@@ -348,7 +375,7 @@ def orderstatus(request):
     return render(request,'orderstatus.html',context)
 
 
-
+# status updation 
 def update_status(request, order_item_id):
     order = Order.objects.get(id=order_item_id)
     if request.method == 'POST':
@@ -358,7 +385,12 @@ def update_status(request, order_item_id):
         # Redirect back to the same page or any desired page
         return redirect('orderstatus')  # Replace 'order_list' with your URL name
 
+# <--------------------------------------------------------endoforder-------------------------------------------------------------->
 
+
+# <--------------------------------------------------------dashboard--------------------------------------------------------------->
+
+# dashboard
 @superuser_required
 def dashboard(request):
 
@@ -392,8 +424,9 @@ def dashboard(request):
     }
     return render(request,'dashboard.html',context)
 
-from datetime import datetime
 
+
+# sales report
 def salesreport(request):
     
     context = {}
@@ -469,8 +502,7 @@ def salesreport(request):
 
 
 
-import csv
-
+# excel
 def export_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=Expenses' + \
@@ -485,7 +517,11 @@ def export_csv(request):
 
     return response
 
+# <--------------------------------------------------------endofdashboard------------------------------------------------------>
 
+
+# <--------------------------------------------------------coupon management----------------------------------------------------------->
+# add coupon
 @superuser_required
 def addcoupon(request):
     if request.method == 'POST':
@@ -498,6 +534,8 @@ def addcoupon(request):
     
     return render(request, 'addcoupon.html', {'form': form})
 
+
+# edit coupon
 @superuser_required
 def editcoupon(request, coupon_id):
     coupon = get_object_or_404(Coupon, id=coupon_id)
@@ -513,6 +551,7 @@ def editcoupon(request, coupon_id):
     return render(request, 'editcoupon.html', {'form': form, 'coupon': coupon})
 
 
+# coupon list
 @superuser_required   
 def couponlist(request):
     coupon = Coupon.objects.all()
@@ -524,6 +563,12 @@ def deletecoupon(request, coupon_id):
     coupon.delete()
     return redirect('couponlist')
 
+# <-----------------------------------------------------endofcoupon---------------------------------------------->
+
+
+# <-----------------------------------------------------offer management----------------------------------------->
+
+# add offer
 def addoffer(request):
     if request.method == 'POST':
         form = OfferForm(request.POST, request.FILES)
@@ -535,6 +580,8 @@ def addoffer(request):
     
     return render(request, 'addoffer.html', {'form': form})
 
+
+# edit offer
 @superuser_required
 def editoffer(request, offer_id):
     offer = get_object_or_404(offer, id=offer_id)
@@ -549,11 +596,15 @@ def editoffer(request, offer_id):
     
     return render(request, 'editoffer.html', {'form': form, 'offer': offer})
 
+
+# offer list
 @superuser_required   
 def offerlist(request):
     offer = Offer.objects.all()
     return render(request, 'offerlist.html', {'offer': offer})
 
+
+# delete offer
 def deleteoffer(request, offer_id):
     offer =Offer.objects.get(id=offer_id)
     offer.delete()

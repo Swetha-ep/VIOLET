@@ -11,7 +11,10 @@ from app.views import *
 import random
 
 
+# <------------------------------------------cart management------------------------------------------------->
+# <---------------------------------------------------------------------------------------------------------->
 
+# Add to cart
 @login_required(login_url='loginn')
 def addtocart(request):
     if request.method == 'POST':
@@ -38,6 +41,7 @@ def addtocart(request):
     return redirect('/')
 
 
+# cart page
 @login_required(login_url='loginn')
 def cart(request):
     cart = Cartt.objects.filter(user=request.user)
@@ -47,6 +51,8 @@ def cart(request):
     return render(request, 'cart.html', context)
 
 
+
+# cart updation
 def updatecart(request):
     if request.method=='POST':
         prod_id = request.POST.get('prod_id')
@@ -59,6 +65,7 @@ def updatecart(request):
     return redirect('/')
 
 
+# delete cart
 def deletecartitem(request):
     if request.method == "POST":
         prod_id = int(request.POST.get('product_id'))
@@ -68,13 +75,19 @@ def deletecartitem(request):
         return JsonResponse({'status':"Cart item removed"})
     return redirect('/')
 
+# <----------------------------------------------endofcart----------------------------------------------->
 
+# <----------------------------------------------wishlist-------------------------------------------------->
+
+# wishlist page
 @login_required(login_url='loginn')
 def wishlist(request):
     wishlist = Wishlist.objects.filter(user=request.user)
     context = {'wishlist' : wishlist}
     return render(request,'wishlist.html',context)
 
+
+# add to wishlist
 def addtowishlist(request):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -93,6 +106,8 @@ def addtowishlist(request):
 
     return redirect('/')
 
+
+# delete wishlist
 def deletewishitem(request):
     if request.method == "POST":
         prod_id = int(request.POST.get('product_id'))
@@ -102,7 +117,11 @@ def deletewishitem(request):
         return JsonResponse({'status':"Wishlist item removed"})
     return redirect('/')
 
+# <---------------------------------------------------endofwishlist----------------------------------------------->
 
+# <---------------------------------------------------checkout---------------------------------------------------->
+
+# checkout page
 @login_required(login_url='loginn')
 def checkout(request):
     cartitems = Cartt.objects.filter(user=request.user)
@@ -114,7 +133,7 @@ def checkout(request):
         else:
             total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
 
-    userprofile = Profile.objects.filter(user=request.user).first()
+    userprofile = Profile.objects.filter(user=request.user).all()
 
     
     context = {'cartitems':cartitems, 'totalprice':total_price, 'userprofile' : userprofile}
@@ -122,6 +141,25 @@ def checkout(request):
     return render(request,'checkout.html',context)
 
 
+
+# select address
+def select_address(request):
+    if request.method == 'POST':
+        selected_address_id = request.POST.get('selectedAddress')
+        if selected_address_id:
+            profile = Profile.objects.get(id=selected_address_id)
+            
+            return redirect('checkout',{'profile' : profile})  
+    return redirect('checkout')  
+
+
+# <----------------------------------------------------endofcheckout--------------------------------------------->
+
+
+# <----------------------------------------------------placeorder------------------------------------------------->
+#
+# placeorder
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
 def placeorder(request):
     if request.method == 'POST':
@@ -213,8 +251,12 @@ def placeorder(request):
 
     return redirect('myorders')
 
+# <-----------------------------------------------------endofplaceorder-------------------------------------------------------->
 
 
+# <-----------------------------------------------------userprofile----------------------------------------------------------->
+
+# profile view
 @login_required
 def UserProfileView(request):
     profile = Profile.objects.filter(user=request.user)
@@ -223,6 +265,46 @@ def UserProfileView(request):
 
 
 
+
+def editprofile(request, profile_id):
+    profile = Profile.objects.get(id=profile_id)
+    
+    if request.method == 'POST':
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        country = request.POST.get('country')
+        pincode = request.POST.get('pincode')
+        
+        profile.fname = fname
+        profile.lname = lname
+        profile.phone = phone
+        profile.address = address
+        profile.city = city
+        profile.state = state
+        profile.country = country
+        profile.pincode = pincode
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully')
+        return redirect('user_profile')
+    
+    return render(request, 'user_profile.html', {'profile': profile})
+
+
+def deleteprofile(request, profile_id):
+    profile =Profile.objects.get(id=profile_id)
+    profile.delete()
+    return redirect('user_profile')
+# <-------------------------------------------------------endofprofile--------------------------------------------------------->
+
+
+# <-------------------------------------------------------ordermanagement------------------------------------------------------>
+
+# order list
 @login_required(login_url='loginn')
 def myorders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
@@ -233,6 +315,7 @@ def myorders(request):
     return render(request,'myorders.html', context)
 
 
+# order view
 @login_required(login_url='loginn')
 def orderview(request,t_no):
     order = Order.objects.filter(tracking_no = t_no).filter(user =request.user).first()
@@ -244,53 +327,7 @@ def orderview(request,t_no):
     return render(request,'orderview.html',context)
 
 
-@login_required(login_url='loginn')
-def razorpaycheck(request):
-    new_price = request.GET.get('new_price')
-    coupon_code2 = request.GET.get('coupon_code2')
-    cart = Cartt.objects.filter(user=request.user)
-    total_price = 0
-    for item in cart:
-        if item.product.offer == None:
-            total_price = total_price + item.product.selling_price * item.product_qty
-        else:
-            total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
-    if new_price:
-        total_price = new_price
-
-    return JsonResponse({
-
-        'total_price' : total_price,
-        'coupon_code2' : coupon_code2,
-    }) 
-
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required(login_url='login')
-def apply_coupon(request):
-    if request.method == 'POST':
-        coupon_code = request.POST.get('coupon_code')
-        order_total = request.POST.get('order_total')
-        print(coupon_code,order_total,"swethaaa")
-        order_total = float(order_total)
-        coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
-        print(coupon,"ansite")
-
-        if coupon:
-            coupon_used = CouponUsed.objects.filter(coupon_id=coupon.id)
-            if coupon_used:
-                return JsonResponse({'status': 'Coupon already used..'})
-            else:
-                if order_total > coupon.minimum_purchase:
-                    new_total = order_total - coupon.discount
-                    print(new_total)
-                    return JsonResponse({'status': 'Coupon Applied..!!','new_total': new_total,'coupon_discount': coupon.discount, 'coupon_code': coupon_code})
-                else:
-                   return JsonResponse({'status': 'You can not use this coupon..'}) 
-        else:
-            return JsonResponse({'status': 'Coupon does not exist..'})
-
-
-
+# cancel order
 def ordercancel(request, order_id):
     order_item = OrderItem.objects.filter(order__id=order_id)
     for order_item in order_item:
@@ -324,6 +361,8 @@ def ordercancel(request, order_id):
     product.save()
     return redirect('myorders')
 
+
+# order return
 def order_return(request, order_id):
     order_item = OrderItem.objects.filter(order__id=order_id)
     
@@ -335,13 +374,11 @@ def order_return(request, order_id):
     
     for order_item in order_item:
         if order_item.order.status == 'Return':
-                messages.error(request, 'Order is already cancelled')
+                messages.error(request, 'Order has already returned')
         else:
                 order_item.order.status = "Return"
-                
-                
                 order_item.order.save()
-                messages.success(request, 'Order has been cancelled successfully')
+                messages.success(request, 'Order will be returned')
 
     if request.method == 'POST':
         comment = request.POST.getlist('comment')
@@ -353,3 +390,61 @@ def order_return(request, order_id):
             
         )
     return redirect('myorders')
+# <-----------------------------------------------------endoforder-------------------------------------------------------------->
+
+
+# <-------------------------------------------------razorpay--------------------------------------------------------------------->
+
+# payment
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='loginn')
+def razorpaycheck(request):
+    new_price = request.GET.get('new_price')
+    coupon_code2 = request.GET.get('coupon_code2')
+    cart = Cartt.objects.filter(user=request.user)
+    total_price = 0
+    for item in cart:
+        if item.product.offer == None:
+            total_price = total_price + item.product.selling_price * item.product_qty
+        else:
+            total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
+    if new_price:
+        total_price = new_price
+
+    return JsonResponse({
+
+        'total_price' : total_price,
+        'coupon_code2' : coupon_code2,
+    }) 
+
+# <--------------------------------------------------------endofrazorpay--------------------------------------------------->
+
+
+# coupon
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='login')
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_code = request.POST.get('coupon_code')
+        order_total = request.POST.get('order_total')
+        print(coupon_code,order_total,"swethaaa")
+        order_total = float(order_total)
+        coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
+        print(coupon,"ansite")
+
+        if coupon:
+            coupon_used = CouponUsed.objects.filter(coupon_id=coupon.id)
+            if coupon_used:
+                return JsonResponse({'status': 'Coupon already used..'})
+            else:
+                if order_total > coupon.minimum_purchase:
+                    new_total = order_total - coupon.discount
+                    print(new_total)
+                    return JsonResponse({'status': 'Coupon Applied..!!','new_total': new_total,'coupon_discount': coupon.discount, 'coupon_code': coupon_code})
+                else:
+                   return JsonResponse({'status': 'You can not use this coupon..'}) 
+        else:
+            return JsonResponse({'status': 'Coupon does not exist..'})
+
+
+

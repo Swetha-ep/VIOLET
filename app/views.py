@@ -16,20 +16,30 @@ import re
 from django.core.exceptions import ValidationError
 
 
+# <-----------------------------------------------Homepage-------------------------------------------------------------------->
 
+# home
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     products = Product.objects.all()[:8]
     banner = Banner.objects.filter(is_active=True)
-    
-
+   
     return render(request, 'index.html',{'products' : products,'banner' : banner})
 
+
+
+# <------------------------------------------------Categories------------------------------------------------------------------>
+
+# category view
 def shop(request):
     categories = Category.objects.filter(is_listed=False)
     context = {'categories': categories}
     return render(request, 'categories.html', context)
 
+
+# <------------------------------------------------products-------------------------------------------------------------------->
+
+# products viewpage
 def collectionsview(request,slug):
     if Category.objects.filter(slug=slug).exists():
         products = Product.objects.filter(category__slug=slug, is_available=False)
@@ -43,6 +53,7 @@ def collectionsview(request,slug):
         return redirect('shop')
     
 
+# single product
 def productview(request, cate_slug, prod_slug):
     try:
         category = Category.objects.get(slug=cate_slug)
@@ -65,7 +76,13 @@ def productview(request, cate_slug, prod_slug):
 
     return render(request, 'products/view.html', context)
 
+# <---------------------------------------------------------endofproduct--------------------------------------------------------->
 
+
+# <---------------------------------------------------------login---------------------------------------------------------------->
+
+# login page
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def loginn(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -96,6 +113,9 @@ def loginn(request):
     return render(request, 'login.html')
 
 
+
+# sign up page
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def register(request):
     if request.method == 'POST':
         otp = request.POST.get('otp')
@@ -155,6 +175,9 @@ def register(request):
     return render(request, 'register.html')
 
 
+
+# forgot password
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def forgotpassword(request):
     if request.method=='POST':
         get_otp=request.POST.get('otp')
@@ -226,6 +249,8 @@ def forgotpassword(request):
     return render (request, 'forgot.html')
   
 
+
+# password validation
 def ValidatePassword(password):
     from django.contrib.auth.password_validation import validate_password
     try:
@@ -235,6 +260,8 @@ def ValidatePassword(password):
         return False
 
  
+
+#  email validation
 def validateEmail(email):
     from django.core.validators import validate_email
     try:
@@ -242,7 +269,9 @@ def validateEmail(email):
         return True
     except ValidationError:
         return False
+    
 
+# logout
 def logout(request):
     auth.logout(request)
     return redirect('/')

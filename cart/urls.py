@@ -13,8 +13,12 @@ urlpatterns = [
     path('delete-wish-item',views.deletewishitem,name="deletewishitem"),
 
     path('checkout',views.checkout,name='checkout'),
+    path('selectaddress',views.select_address,name="select_address"),
     path('place-order', views.placeorder, name="placeorder"),
+
     path('user_profile/', views.UserProfileView, name='user_profile'),
+    path('deleteprofile/<int:profile_id>',views.deleteprofile, name="deleteprofile"),
+    path('editprofile/<int:profile_id>',views.editprofile, name='editprofile'),
     
     path('proceed-to-pay',views.razorpaycheck),
 
@@ -23,6 +27,7 @@ urlpatterns = [
     path('apply_coupon',views.apply_coupon,name="apply_coupon"),
     path('ordercancel/<int:order_id>',views.ordercancel,name='ordercancel'),
     path('order_return/<int:order_id>',views.order_return,name='order_return'), 
+    
 
     
 ]
