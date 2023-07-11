@@ -40,7 +40,6 @@
 <body>
     <!-- Page Preloder -->
     
-    
     <!-- Search model -->
     <header class="header-section">
         <div class="container-fluid">
@@ -104,22 +103,22 @@
                                 <h4>Shipping details</h4>
                                 <hr>
                                 <label class="mt-2"><b>First Name</b></label>
-                                <div class ="border p-1"> {{order.fname}}</div><br>
+                                <div class ="border p-1"> {{order.profile.fname}}</div><br>
                                 <label class="mt-2"><b>Last Name</b></label>
-                                <div class ="border p-1"> {{order.lname}}</div><br>
+                                <div class ="border p-1"> {{order.profile.lname}}</div><br>
                                 <label class="mt-2"><b>Email</b></label>
-                                <div class ="border p-1"> {{order.email}}</div><br>
+                                <div class ="border p-1"> {{order.profile.email}}</div><br>
                                 <label class="mt-2"><b>Contact No.</b></label>
-                                <div class ="border p-1"> {{order.phone}}</div><br>
+                                <div class ="border p-1"> {{order.profile.phone}}</div><br>
                                 <label class="mt-2"><b>Address</b></label>
                                 <div class ="border p-1"> 
-                                    {{order.address}}
-                                    {{order.city}},
-                                    {{order.state}},
-                                    {{order.country}}
+                                    {{order.profile.address}}
+                                    {{order.profile.city}},
+                                    {{order.profile.state}},
+                                    {{order.profile.country}}
                                 </div><br>
                                 <label><b>Zip Code</b></label>
-                                <div class ="border p-1"> {{order.pincode}}</div>
+                                <div class ="border p-1"> {{order.profile.pincode}}</div>
                             </div>
 
                             <div class ="col-md-6">

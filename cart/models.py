@@ -44,18 +44,26 @@ class Wishlist(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-class Order(models.Model):
-    user = models.ForeignKey(User,on_delete = models.CASCADE)
+class Profile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     fname = models.CharField(max_length=150, null=False)
     lname = models.CharField(max_length=150, null=False)
-    email = models.CharField(max_length=150, null=False)
-    phone = models.CharField(max_length=150, null=False)
+    phone = models.BigIntegerField(null=False)
     address = models.TextField(null=False)
     city = models.CharField(max_length=150, null=False)
     state = models.CharField(max_length=150, null=False)
     country = models.CharField(max_length=150, null=False)
-    pincode = models.CharField(max_length=150, null=False)
+    email = models.CharField(max_length=150, null=False)
+    pincode = models.BigIntegerField(null=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
+
+class Order(models.Model):
+    user = models.ForeignKey(User,on_delete = models.CASCADE)
+    profile = models.ForeignKey(Profile,on_delete=models.CASCADE)
     total_price = models.FloatField(null=False)
     payment_mode = models.CharField(max_length=150, null=False)
     payment_id = models.CharField(max_length=250, null=True)
@@ -99,20 +107,7 @@ class OrderItem(models.Model):
         return '{} {}'.format(self.order.id, self.order.tracking_no)
     
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fname = models.CharField(max_length=150, null=False)
-    lname = models.CharField(max_length=150, null=False)
-    phone = models.BigIntegerField(null=False)
-    address = models.TextField(null=False)
-    city = models.CharField(max_length=150, null=False)
-    state = models.CharField(max_length=150, null=False)
-    country = models.CharField(max_length=150, null=False)
-    pincode = models.BigIntegerField(null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.user.username
     
 
 class Orderreturn(models.Model):

@@ -279,11 +279,25 @@ def logout(request):
 
 
 
+# Validate Name 
+def validate_name(value):
+    if not re.match(r'^[a-zA-Z\s]*$', value):
+        return 'Name should only contain alphabets and spaces'
+    
+    elif value.strip() == '':
+        return 'Name field cannot be empty or contain only spaces' 
+    elif User.objects.filter(username=value).exists():
+        return 'Usename already exist'
+    else:
+        return False
 
 
 
 
 
+
+def custom_404_view(request):
+    return render(request, 'error.html')
 
 
 

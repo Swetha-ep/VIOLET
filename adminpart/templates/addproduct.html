@@ -255,14 +255,14 @@
                 <div class="row mb-3">
                   <label for="name">Name:</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control"id="name" name="product_name">
+                    <input type="text" class="form-control"id="name" name="product_name" required>
                   </div>
                 </div>
                 
                 <div class="row mb-3">
                   <label for="product_image">Product Image:</label>
                   <div class="col-sm-10">
-                      <input type="file" class="form-control" id="product_image" name="product_image">
+                      <input type="file" class="form-control" id="product_image" name="product_image" required>
                   </div>
                 </div>
                 
@@ -271,7 +271,7 @@
                   <div class="col-sm-10">
                       {% for size in sizes %}
                       <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="size_{{ size.id }}" name="sizes" value="{{ size.id }}">
+                          <input class="form-check-input" type="checkbox" id="size_{{ size.id }}" name="sizes" value="{{ size.id }}" >
                           <label class="form-check-label" for="size_{{ size.id }}">{{ size.name }}</label>
                       </div>
                       {% endfor %}
@@ -330,7 +330,7 @@
                   </div>
                 </div>
                 <label for="category">Offer:</label>
-                <select id="offer" class="form-control" name="offer">
+                <select id="offer" class="form-control" name="offer" optional >
                   {% for offer in offer %}
                   <option  value="...">{{ offer.offer_name }}</option>
                   {% endfor %}

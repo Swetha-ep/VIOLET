@@ -182,7 +182,13 @@ def editproduct(request, slug):
         trending = request.POST.get('trending') == 'on'
         tag = request.POST.get('tag')
         
-       
+        offer = request.POST.get('offer')
+        
+        if offer == "No offer":
+            offer_id = None
+        else:
+            offer_id = Offer.objects.get(id=offer)
+
         product.category = Category.objects.get(slug=category_slug)
         product.product_name = product_name
         if product_image:
@@ -197,6 +203,7 @@ def editproduct(request, slug):
         product.selling_price = selling_price
         product.trending = trending
         product.tag = tag
+        product.offer = offer_id
         product.save()
         
         
@@ -207,7 +214,8 @@ def editproduct(request, slug):
     context = {
         'product': product,
         'categories': categories,
-        'sizes': sizes
+        'sizes': sizes,
+        'offer': Offer.objects.all()
     }
     return render(request, 'editproduct.html', context)
 # <-----------------------------------------------------endofproducts------------------------------------------->
@@ -391,6 +399,7 @@ def update_status(request, order_item_id):
 # <--------------------------------------------------------dashboard--------------------------------------------------------------->
 
 # dashboard
+@login_required(login_url='loginn')
 @superuser_required
 def dashboard(request):
 

@@ -13,7 +13,7 @@ urlpatterns = [
     path('delete-wish-item',views.deletewishitem,name="deletewishitem"),
 
     path('checkout',views.checkout,name='checkout'),
-    path('selectaddress',views.select_address,name="select_address"),
+    path('addaddress',views.addaddress,name="addaddress"),
     path('place-order', views.placeorder, name="placeorder"),
 
     path('user_profile/', views.UserProfileView, name='user_profile'),

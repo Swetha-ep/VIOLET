@@ -13,6 +13,7 @@ urlpatterns = [
     path('loginn/',views.loginn,name='loginn'),
     path('logout/',views.logout,name='logout'),
     path('forgotpassword/',views.forgotpassword,name='forgotpassword'),
+    path('page_not_found',views.custom_404_view,name='page_not_found'),
     
 ]
 

@@ -1,26 +1,73 @@
+
+// var options = {
+//     "key": "rzp_test_LXZDJ9u8i9F7vG", // Enter the Key ID generated from the Dashboard
+//     "amount": 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+//     "currency": "INR",
+//     "name": "ShoeStore",
+//     "description": "Purchases",
+//     "image": "{% static 'img/vk-high.png' %}",
+//     "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+//     "handler": function (response){
+//         var  addres = get_address()
+//         if (!addres){
+//             alert('should select address')
+//             return;
+//         }
+//         window.location.href = `${window.location.origin}/ad/order/ordersuccess/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}&address=${addres}`
+//     },
+//     "theme": {
+//         "color": "#c20c0c"
+//     }
+// };
+// var rzp1 = new Razorpay(options);
+// rzp1.on('payment.failed', function (response){
+//         // alert(response.error.code);
+//         // alert(response.error.description);
+//         // alert(response.error.source);
+//         // alert(response.error.step);
+//         // alert(response.error.reason);
+//         // alert(response.error.metadata.order_id);
+//         // alert(response.error.metadata.payment_id);
+// });
+// document.getElementById('place-order-btn').onclick = function(e){
+//     e.preventDefault();
+//     console.log('opened');
+//     var  addres = get_address()
+//     if (!addres){
+//         alert('Please select an delivery address')
+//         return;
+//     }
+//     rzp1.open();
+// }
+
+// function get_address(){
+//     try{
+//         var address = document.querySelector('input[name="address"]:checked').getAttribute('id')
+//         return address
+//     }
+//     catch{
+//         return;
+//     }
+// }
+
+
+
+
+
+
+
+
+// ..............................................................................................
+
 $(document).ready(function() {
 
     $('.paywithRazorPay').click(function(e) {
         e.preventDefault();
-
-        var fname = $("[name='fname']").val()
-        var lname = $("[name='lname']").val()
-        var email = $("[name='email']").val()
-        var phone = $("[name='phone']").val()
-        var address = $("[name='address']").val()
-        var city = $("[name='city']").val()
-        var state = $("[name='state']").val()
-        var country = $("[name='country']").val()
-        var pincode = $("[name='pincode']").val()
-        var new_price = $("[name='new_price']").val()
-        var coupon_code2 = $("[name='coupon_code2']").val()
-        var token = $("[name='csrfmiddlewaretoken']").val();
-
-        if (fname == "" || lname == "" || email == "" || phone == "" || address == ""|| city == ""|| state == "" || country == ""|| pincode == "")
-        {
-            
-            swal("Alert!", "All fields are mandatory!", "error");
-            return false;
+        var token = $("[name='csrfmiddlewaretoken']").val()
+        var  addres = get_address()
+             if (!addres){
+            alert('should select address')
+            return;
 
         }
         else
@@ -28,11 +75,6 @@ $(document).ready(function() {
             $.ajax({
                 method : "GET",
                 url : "/proceed-to-pay",
-                data : {
-                    "new_price" : new_price,
-                    "coupon_code2" : coupon_code2,
-                    csrfmiddlewaretoken : token
-                },
                 success : function(response){
                     console.log(response);
                     var options = {
@@ -46,20 +88,11 @@ $(document).ready(function() {
                         "handler": function (responseb){
                             alert(responseb.razorpay_payment_id);
                             data = {
-                                "fname" : fname,
-                                "lname" : lname,
-                                "email" : email,
-                                "phone" : phone,
-                                "address" : address,
-                                "city" : city,
-                                "state" : state,
-                                "country" : country,
-                                "pincode" : pincode,
-                                "new_price" : new_price,
-                                "coupon_code2" : coupon_code2,
+                              
+                                "address": addres,
                                 "payment_mode" : "Paid by Razorpay",
                                 "payment_id" : responseb.razorpay_payment_id,
-                                 csrfmiddlewaretoken : token
+                                csrfmiddlewaretoken: token
                             }
                             $.ajax({
                                 method : "POST",
@@ -75,11 +108,11 @@ $(document).ready(function() {
                             })
                             
                         },
-                        "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
-                            "name": fname + " "+ lname, //your customer's name
-                            "email": email, 
-                            "contact": phone  //Provide the customer's phone number for better conversion rates 
-                        },
+                        // "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+                        //     "name": fname + " "+ lname, //your customer's name
+                        //     "email": email, 
+                        //     "contact": phone  //Provide the customer's phone number for better conversion rates 
+                        // },
                         
                         "theme": {
                             "color": "#3399cc"
@@ -97,3 +130,12 @@ $(document).ready(function() {
     });
 
 });
+function get_address(){
+    try{
+        var address = document.querySelector('input[name="address"]:checked').getAttribute('id')
+        return address
+    }
+    catch{
+        return;
+    }
+}

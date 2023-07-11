@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render
 from django.contrib import messages
 from app.models import Product,Category
+import razorpay
 
 from django.core.mail import send_mail
 
@@ -140,6 +141,41 @@ def checkout(request):
         
     return render(request,'checkout.html',context)
 
+# Add adress
+
+
+@login_required
+
+def addaddress(request):
+    if request.method == 'POST':
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        country = request.POST.get('country')
+        pincode = request.POST.get('pincode')
+
+        # Create a new profile object for the user
+        profile = Profile.objects.create(
+            user=request.user,
+            fname=fname,
+            lname=lname,
+            phone=phone,
+            address=address,
+            city=city,
+            state=state,
+            country=country,
+            pincode=pincode
+        )
+
+        messages.success(request, 'Profile added successfully')
+        return redirect('user_profile')
+
+    return render(request, 'add_profile.html')
+
+
 
 
 # select address
@@ -164,35 +200,11 @@ def select_address(request):
 def placeorder(request):
     if request.method == 'POST':
 
-        currentuser = User.objects.filter(id=request.user.id).first()
-        if not currentuser.username:
-            currentuser.email = request.POST.get('email')
-        
-        if not Profile.objects.filter(user=request.user):
-            userprofile = Profile()
-            userprofile.user = request.user
-            userprofile.fname = request.POST.get('fname')
-            userprofile.lname = request.POST.get('lname')
-            userprofile.phone = request.POST.get('phone')
-            userprofile.address = request.POST.get('address')
-            userprofile.city = request.POST.get('city')
-            userprofile.state = request.POST.get('state')
-            userprofile.country = request.POST.get('country')
-            userprofile.pincode = request.POST.get('pincode')
-            userprofile.save()
-            
-
         neworder = Order()
         neworder.user = request.user
-        neworder.fname = request.POST.get('fname')
-        neworder.lname = request.POST.get('lname')
-        neworder.email = request.POST.get('email')
-        neworder.phone = request.POST.get('phone')
-        neworder.address = request.POST.get('address')
-        neworder.city = request.POST.get('city')
-        neworder.state = request.POST.get('state')
-        neworder.country = request.POST.get('country')
-        neworder.pincode = request.POST.get('pincode')
+        address = request.POST.get('address')
+        a = Profile.objects.get(id=address)
+        neworder.profile= a
         neworder.payment_mode = request.POST.get('payment_mode')
         neworder.payment_id = request.POST.get('payment_id')
 
@@ -247,6 +259,8 @@ def placeorder(request):
 
         payMode = request.POST.get('payment_mode')
         if (payMode == "Paid by Razorpay"):
+            return JsonResponse({'status':"Your order has been placed successfully."})
+        if (payMode == "COD"):
             return JsonResponse({'status':"Your order has been placed successfully."})
 
     return redirect('myorders')
@@ -399,8 +413,6 @@ def order_return(request, order_id):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
 def razorpaycheck(request):
-    new_price = request.GET.get('new_price')
-    coupon_code2 = request.GET.get('coupon_code2')
     cart = Cartt.objects.filter(user=request.user)
     total_price = 0
     for item in cart:
@@ -408,13 +420,11 @@ def razorpaycheck(request):
             total_price = total_price + item.product.selling_price * item.product_qty
         else:
             total_price = total_price + item.product.selling_price * item.product_qty - item.product.offer.discount
-    if new_price:
-        total_price = new_price
 
     return JsonResponse({
 
         'total_price' : total_price,
-        'coupon_code2' : coupon_code2,
+        # 'coupon_code2' : coupon_code2,
     }) 
 
 # <--------------------------------------------------------endofrazorpay--------------------------------------------------->
