@@ -21,6 +21,7 @@ from django.template.defaultfilters import slugify
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import BannerForm, CouponForm,OfferForm
 from app.models import Banner
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncDay
 from django.db.models import Sum
@@ -59,7 +60,11 @@ def userlist(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
 def block_user(request,user_id):
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+       
+        return redirect('userlist')
     user.is_active = False
     user.save()
     return redirect('userlist')
@@ -70,7 +75,13 @@ def block_user(request,user_id):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='loginn')
 def unblock_user(request,user_id):
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        # Handle the case when the user with the given id does not exist
+        # You can redirect to an error page, display an error message, or take any other appropriate action
+        return redirect('userlist')
+
     user.is_active = True
     user.save()
     return redirect('userlist')
@@ -126,14 +137,23 @@ def addproduct(request):
         product_image = request.FILES['product_image']
         stock = request.POST['stock']
         description = request.POST['description']
-        original_price = request.POST['original_price']
+        
         selling_price = request.POST['selling_price']
         is_available = request.POST.get('is_available', False) == 'on'
         trending = request.POST.get('trending', False) == 'on'
         tag = request.POST['tag']
-        offer = request.POST.get['offer']
+        offer = request.POST.get('offer')
 
-        
+        if offer == "No offer":
+            offer_id = None
+        else:
+            offer_id = Offer.objects.get(id=offer)
+
+        # Check if a product with the same name already exists
+        if Product.objects.filter(product_name=product_name).exists():
+            messages.error(request, 'Product already exists')
+            return redirect('addproduct')
+
         slug = slugify(product_name)
 
         product = Product.objects.create(
@@ -143,30 +163,34 @@ def addproduct(request):
             product_image=product_image,
             stock=stock,
             description=description,
-            original_price=original_price,
+            
             selling_price=selling_price,
             is_available=is_available,
             trending=trending,
             tag=tag,
-            offer = offer,
+            offer=offer_id,
         )
 
         sizes = request.POST.getlist('sizes')
         product.sizes.set(sizes)
-
-        return render(request, 'productlist', {'message': 'Product created successfully.'})
+        messages.success(request, 'Product created successfully.')
+        return redirect('productlist')
 
     categories = Category.objects.all()
     sizes = Size.objects.all()
     offer = Offer.objects.all()
-    return render(request, 'addproduct.html', {'categories': categories, 'sizes': sizes, 'offer' : offer})
+    return render(request, 'addproduct.html', {'categories': categories, 'sizes': sizes, 'offer': offer})
 
 
 
 # edit products
 @superuser_required
 def editproduct(request, slug):
-    product = Product.objects.get(slug=slug)
+    try:
+        product = Product.objects.get(slug=slug)
+    except Product.DoesNotExist:
+        
+        return redirect('productlist')
     
     if request.method == 'POST':
         
@@ -177,7 +201,7 @@ def editproduct(request, slug):
         description = request.POST.get('description')
         is_available = request.POST.get('is_available') == 'on'
         stock = request.POST.get('stock')
-        original_price = request.POST.get('original_price')
+        
         selling_price = request.POST.get('selling_price')
         trending = request.POST.get('trending') == 'on'
         tag = request.POST.get('tag')
@@ -199,7 +223,7 @@ def editproduct(request, slug):
         product.description = description
         product.is_available = is_available
         product.stock = stock
-        product.original_price = original_price
+        
         product.selling_price = selling_price
         product.trending = trending
         product.tag = tag
@@ -259,8 +283,8 @@ def addcategory(request):
             description=description,
             is_listed=True if is_listed == 'True' else False,
         )
-        
-        return redirect('categorylist',{'message': 'Category created successfully'})
+        messages.success(request,"Category addded successfully")
+        return redirect('categorylist')
 
     return render(request, 'addcategory.html')
 
@@ -268,7 +292,11 @@ def addcategory(request):
 # edit category
 @superuser_required
 def editcategory(request, slug):
-    category = Category.objects.get(slug=slug)
+    try:
+        category = Category.objects.get(slug=slug)
+    except Category.DoesNotExist:
+        
+        return redirect('categorylist')
     
     if request.method == 'POST':
         category_name = request.POST.get('category_name')
@@ -282,8 +310,8 @@ def editcategory(request, slug):
         category.is_listed = is_listed
         
         category.save()
-        
-        return redirect('categorylist',{'message': 'Category updated successfully'})
+        messages.success(request,"Category updated successfully")
+        return redirect('categorylist')
     
     return render(request, 'editcategory.html', {'category': category})
 
@@ -324,8 +352,12 @@ def create_banner(request):
 # edit banner
 @superuser_required
 def edit_banner(request, banner_id):
-    banner = get_object_or_404(Banner, id=banner_id)
-    
+    try:
+        banner = Banner.objects.get(id=banner_id)
+    except Banner.DoesNotExist:
+       
+        return redirect('bannerlist')
+
     if request.method == 'POST':
         form = BannerForm(request.POST, request.FILES, instance=banner)
         if form.is_valid():
@@ -335,7 +367,6 @@ def edit_banner(request, banner_id):
         form = BannerForm(instance=banner)
     
     return render(request, 'editbanner.html', {'form': form, 'banner': banner})
-
 
 # list banner
 @superuser_required
@@ -593,7 +624,7 @@ def addoffer(request):
 # edit offer
 @superuser_required
 def editoffer(request, offer_id):
-    offer = get_object_or_404(offer, id=offer_id)
+    offer = get_object_or_404(Offer, id=offer_id)
     
     if request.method == 'POST':
         form = OfferForm(request.POST, request.FILES, instance=offer)

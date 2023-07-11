@@ -37,7 +37,7 @@ def addtocart(request):
             else:
                 return JsonResponse({'status':"No such product found"})
         else:
-            return JsonResponse({'status' : ""})
+            return JsonResponse({'status' : "Login to continue"})
         
     return redirect('/')
 

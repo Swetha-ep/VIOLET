@@ -242,13 +242,13 @@
                     <div class="row mb-3">
                       <label for="inputText" class="col-sm-2 col-form-label">Name</label>
                       <div class="col-sm-10">
-                        <input type="text" class="form-control" name="product_name" id="inputname" value="{{ product.product_name }}">
+                        <input type="text" class="form-control" name="product_name" id="inputname" value="{{ product.product_name }}" required>
                       </div>
                     </div>
                     <div class="row mb-3">
                       <label for="inputImage" class="col-sm-2 col-form-label">Image</label>
                       <div class="col-sm-10">
-                        <input type="file" class="form-control" name="product_image" id="inputImage" value="{{ product.product_image }}">
+                        <input type="file" class="form-control" name="product_image" id="inputImage" value="{{ product.product_image }}" required>
                       </div>
                     </div>
 
@@ -267,7 +267,7 @@
                     <div class="row mb-3">
                       <label for="inputPassword" class="col-sm-2 col-form-label">Description</label>
                       <div class="col-sm-10">
-                        <textarea class="form-control" style="height: 100px" name="description">{{ product.description }}</textarea>
+                        <textarea class="form-control" style="height: 100px" name="description" required>{{ product.description }}</textarea>
                       </div>
                     </div>
 
@@ -278,19 +278,16 @@
 
                     <div class="row mb-3">
                         <label for="status">Stock:</label>
-                        <input type="number" class="form-control" name="stock" value="{{product.stock}}">
+                        <input type="number" class="form-control" name="stock" value="{{product.stock}}" required>
                     </div>
 
                     
 
-                    <div class="row mb-3">
-                        <label for="original_price">Original Price:</label>
-                        <input type="number"class="form-control" id="original_price" name="original_price" value="{{product.original_price}}">
-                    </div>
+                    
 
                     <div class="row mb-3">
                         <label for="selling_price">selling Price:</label>
-                        <input type="number"class="form-control" id="selling_price" name="selling_price" value="{{product.selling_price}}">
+                        <input type="number"class="form-control" id="selling_price" name="selling_price" value="{{product.selling_price}}" required>
                     </div>
                     
                     <div class="col-sm-10">
@@ -300,7 +297,7 @@
 
                     <div class="row mb-3">
                         <label for="tag">Tag:</label>
-                        <input type="text"class="form-control" id="tag" name="tag" value="{{product.tag}}">   
+                        <input type="text"class="form-control" id="tag" name="tag" value="{{product.tag}}" required>   
                     </div>
                     <label for="category">Offer:</label>
                     <select id="offer" class="form-control" name="offer">

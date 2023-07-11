@@ -6,6 +6,9 @@ class BannerForm(forms.ModelForm):
     class Meta:
         model = Banner
         fields = ['image', 'title', 'description','is_active']
+        widgets = {
+            'image': forms.FileInput(attrs={'required': 'required'}),
+        }
         
 
 class CouponForm(forms.ModelForm):

@@ -283,7 +283,7 @@
                 <div class="row mb-3">
                   <label for="quantity">Stock:</label>
                   <div class="col-sm-10">
-                    <input type="number" class="form-control"id="quantity" name="stock">
+                    <input type="number" class="form-control"id="quantity" name="stock" required>
                   </div>
                 </div>
 
@@ -291,16 +291,11 @@
                 <div class="row mb-3">
                   <label for="description">Description:</label>
                   <div class="col-sm-10">
-                    <textarea id="description" class="form-control"name="description"></textarea>
+                    <textarea id="description" class="form-control"name="description" required></textarea>
                   </div>
                 </div>
                 
-                <div class="row mb-3">
-                  <label for="original_price">Original Price:</label>
-                  <div class="col-sm-10">
-                    <input type="number"class="form-control" id="original_price" name="original_price">
-                  </div>
-                </div>
+                
                 
                 <div class="row mb-3">
                   <label for="selling_price">Selling Price:</label>
@@ -330,9 +325,10 @@
                   </div>
                 </div>
                 <label for="category">Offer:</label>
-                <select id="offer" class="form-control" name="offer" optional >
+                <select id="offer" class="form-control" name="offer">
+                  <option> No offer</option>
                   {% for offer in offer %}
-                  <option  value="...">{{ offer.offer_name }}</option>
+                  <option  value="{{offer.id}}">{{ offer.offer_name }}</option>
                   {% endfor %}
                 </select>
                 

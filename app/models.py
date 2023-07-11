@@ -64,7 +64,7 @@ class Product(models.Model):
     product_image = models.ImageField(upload_to=get_file_path, null=True, blank=True)
     stock = models.IntegerField(null=False, blank=False, default=0)
     description = models.CharField(max_length=500, null=False, blank=False)
-    original_price = models.FloatField(null=False, blank=False)
+    # original_price = models.FloatField(null=False, blank=False)
     selling_price = models.FloatField(null=False, blank=False)
     is_available = models.BooleanField(default=True)
     trending = models.BooleanField(default=False, help_text="0=default, 1=trending")
