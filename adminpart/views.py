@@ -354,8 +354,7 @@ def create_banner(request):
 def edit_banner(request, banner_id):
     try:
         banner = Banner.objects.get(id=banner_id)
-    except Banner.DoesNotExist:
-       
+    except Banner.DoesNotExist:   
         return redirect('bannerlist')
 
     if request.method == 'POST':

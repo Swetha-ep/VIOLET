@@ -274,7 +274,7 @@ def placeorder(request):
 @login_required
 def UserProfileView(request):
     profile = Profile.objects.filter(user=request.user)
-    wallet = Wallet.objects.get(user= request.user)
+    wallet = Wallet.objects.filter(user= request.user).first()
     return render(request, 'user_profile.html', {'profile' : profile, 'wallet' : wallet})
 
 
@@ -332,7 +332,10 @@ def myorders(request):
 # order view
 @login_required(login_url='loginn')
 def orderview(request,t_no):
-    order = Order.objects.filter(tracking_no = t_no).filter(user =request.user).first()
+    try :
+        order = Order.objects.get(tracking_no = t_no)
+    except Order.DoesNotExist:
+        return redirect('myorders')
     orderitems = OrderItem.objects.filter(order = order)
     context = {
         'order':order,

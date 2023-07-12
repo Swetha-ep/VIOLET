@@ -5,6 +5,7 @@ from django.contrib.auth import login as loginn
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
+from django.core.exceptions import ObjectDoesNotExist
 
 # verification email
 from .models import User_otp
@@ -22,7 +23,10 @@ from django.core.exceptions import ValidationError
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     products = Product.objects.all()[:8]
-    banner = Banner.objects.filter(is_active=True)
+    try:
+        banner = Banner.objects.filter(is_active=True)
+    except ObjectDoesNotExist:
+        return redirect('index')
    
     return render(request, 'index.html',{'products' : products,'banner' : banner})
 
