@@ -19,3 +19,5 @@ admin.site.register(Banner)
 
 admin.site.register(Offer)
 admin.site.register(Size)
+
+admin.site.register(User_otp)
