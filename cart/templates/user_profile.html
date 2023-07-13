@@ -84,7 +84,14 @@
     <section class="section profile">
         <br>
         <br>
-   
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>{{message}}</strong>
+            </div>
+        {% endfor %}
+        {%endif%}
             <div class="container my-3">
                     
                     
