@@ -385,28 +385,26 @@ def ordercancel(request, order_id):
 
 # order return
 def order_return(request, order_id):
-    order_item = OrderItem.objects.filter(order__id=order_id)
-    
+     
     try:
-        order_return = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
         messages.error(request, 'order_not_found')
         return redirect('myorders')
     
-    for order_item in order_item:
-        if order_item.order.status == 'Return':
-                messages.error(request, 'Order has already returned')
-        else:
-                order_item.order.status = "Return"
-                order_item.order.save()
-                messages.success(request, 'Order will be returned')
+    if order.status == 'Return':
+        messages.error(request, 'Order has already returned')
+    else:
+        order.status = "Return"
+        order.save()
+        messages.success(request, 'Order will be returned')
 
     if request.method == 'POST':
         comment = request.POST.getlist('comment')
         
-        order_return = Orderreturn.objects.create(
+        order = Orderreturn.objects.create(
             user=request.user,
-            order=order_return,
+            order=order,
             comment=comment,
             
         )

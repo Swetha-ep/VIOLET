@@ -129,7 +129,33 @@
                                             {%if item.status == 'Delivered' %}
                                               <form method="POST" action="{% url 'order_return' item.id %}">
                                               {% csrf_token %}
-                                              <button type="button" class="tracking-button btn-sm  btn btn-outline-secondary" data-toggle="modal" data-target="#returnModal">Return Order</button>
+                                              <button type="button" class="tracking-button btn-sm  btn btn-outline-secondary" data-toggle="modal" data-target="#returnModal{{forloop.counter}}">Return Order</button>
+                                              <div class="modal fade" id="returnModal{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                      <!-- Add your form fields for return issue and image upload here -->
+                                                      
+                                                        
+                                                        <!-- Add your form fields here -->
+                                                        <div class="form-group">
+                                                          <label for="comment">Return Issue</label>
+                                                          <textarea class="form-control" id="comment" name=" comment" rows="4" required></textarea>
+                                                        </div>
+                                                        
+                                                        <button type="submit" class="btn btn-secondary">Submit Return</button>
+                                                      </form>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            
                                             </form>
                                            {%else%}
                                             <form method="post" action="{% url 'ordercancel' item.id %}">
@@ -156,33 +182,7 @@
 
 
 <!-- The modal order return -->
-{%for item in orders%}
-<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Add your form fields for return issue and image upload here -->
-          <form method="POST" action="{% url 'order_return' item.id %}">
-            {% csrf_token %}
-            <!-- Add your form fields here -->
-            <div class="form-group">
-              <label for="comment">Return Issue</label>
-              <textarea class="form-control" id="comment" name=" comment" rows="4" required></textarea>
-            </div>
-            
-            <button type="submit" class="btn btn-secondary">Submit Return</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  {%endfor%}
+
 
   <footer class="footer-section spad">
     <div class="container">
