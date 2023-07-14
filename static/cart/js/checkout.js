@@ -102,6 +102,9 @@ $(document).ready(function() {
                                 success : function(responseC) {
                                     swal("Congratulations!",responseC.status,"success").then((value) => {
                                         window.location.href = 'my-orders'
+                                        setTimeout(function() {
+                                            location.reload();
+                                          }, 500);
                                       });
                                     
                                 }

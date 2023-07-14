@@ -94,130 +94,132 @@
       </div>
     </div>
   </section>
-  
+
   <!-- Page Add Section End -->
-  
+
   <div class="container mt-3">
     <div class="row">
       <div class="col-md-7">
         <div class="card shadow">
           <div class="card-body">
-            {% for address in userprofile %}
-              <div class="row">
-                <span class="form-check pt-1 m-l-10">
-                  
-                  <input type="radio" name="address" id="{{address.id}}">
-                </span>
-                <h5 class="card-title fw-bold m-l-10">{{address.fname}}</h5>
-              </div>
-              <div>
-                <h6 class="card-title">{{address.address}}(H),{{address.city}}</h6>
-                <p class="card-text">{{address.pincode}} </p>
-
+            {% if userprofile %}
+              {% for address in userprofile %}
+                <div class="row">
+                  <span class="form-check pt-1 m-l-10">
+                    <input type="radio" name="address" id="{{address.id}}">
+                  </span>
+                  <h5 class="card-title fw-bold m-l-10">{{address.fname}}</h5>
+                </div>
                 <div>
-                  <button type="button" class="btn btn-light border border-dark" data-bs-toggle="modal"
-                    data-bs-target="#address{{forloop.counter}}">
-                    <i class="fa-solid fa-eye"></i>
-                    View
-                  </button>
-                  <!-- view Modal -->
-                  <div class="modal fade" id="address{{forloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title" id="staticBackdropLabel">View address</h4>
-                          <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa fa-times"></i>
-                          </button>
-                        </div>
-                        <div class="modal-body">
+                  <h6 class="card-title">{{address.address}}(H),{{address.city}}</h6>
+                  <p class="card-text">{{address.pincode}} </p>
 
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">Name</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.fname}}
-                            </div>
+                  <div>
+                    <button type="button" class="btn btn-light border border-dark" data-bs-toggle="modal"
+                      data-bs-target="#address{{forloop.counter}}">
+                      <i class="fa-solid fa-eye"></i>
+                      View
+                    </button>
+                    <!-- view Modal -->
+                    <div class="modal fade" id="address{{forloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false"
+                      tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title" id="staticBackdropLabel">View address</h4>
+                            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close">
+                              <i class="fa fa-times"></i>
+                            </button>
                           </div>
-                          <hr>
+                          <div class="modal-body">
 
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">House Name</p>
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">Name</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.fname}}
+                              </div>
                             </div>
-                            <div class="col-sm-7">
-                              {{address.address}}
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">House Name</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.address}}
+                              </div>
                             </div>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">Phone number</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.phone}}
+                              </div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">City</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.city}}
+                              </div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">State</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.state}}
+                              </div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">Country</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.country}}
+                              </div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <p class="mb-0">Pincode</p>
+                              </div>
+                              <div class="col-sm-7">
+                                {{address.pincode}}
+                              </div>
+                            </div>
+                            <hr>
+
                           </div>
-                          <hr>
-
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">Phone number</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.phone}}
-                            </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
                           </div>
-                          <hr>
-
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">City</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.city}}
-                            </div>
-                          </div>
-                          <hr>
-
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">State</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.state}}
-                            </div>
-                          </div>
-                          <hr>
-
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">Country</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.country}}
-                            </div>
-                          </div>
-                          <hr>
-
-                          <div class="row">
-                            <div class="col-sm-5">
-                              <p class="mb-0">Pincode</p>
-                            </div>
-                            <div class="col-sm-7">
-                              {{address.pincode}}
-                            </div>
-                          </div>
-                          <hr>
-
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>
+                    <!-- view Modal -->
                   </div>
-                  <!-- view Modal -->
                 </div>
-                {% endfor %}
-                <a class="btn btn-secondary cap" href="{% url 'user_profile'%}">Add new address</a></button>
-              </div>
-            </div> 
+              {% endfor %}
+            {% else %}
+              <p>No address found.</p>
+            {% endif %}
+            <a class="btn btn-secondary cap" href="{% url 'user_profile'%}">Add new address</a>
           </div>
-        </div> 
+        </div>
       </div>
       <div class="col-md-5">
         <div class="card shadow">
@@ -225,33 +227,36 @@
             <h6>Order Summary</h6>
             <hr />
             {% if cartitems %}
-            <table class="table table-stripeds table-bordereds">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in cartitems %}
-                <tr>
-                  <td>
-                    <img src="{{item.product.product_image.url}}" height="50px" class="me-2" width="50px" />
-                    {{item.product.product_name}}
-                  </td>
-                  <td>{{item.product_qty}}</td>
-                  <td>
-                    {% if item.product.offer %}
-                    <span class="fw-bold">{{item.product.offer.offer_name}}</span>
-                    <del class="text-danger">Rs.{{item.product.selling_price |stringformat:'d'}}</del>
-                    &nbsp; Rs.{{item.product.get_offer}} {% else %}
-                    Rs.{{item.product.selling_price | stringformat:'d'}}
-                    {%endif %}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in cartitems %}
+                    <tr>
+                      <td>
+                        <img src="{{item.product.product_image.url}}" height="50px" class="me-2" width="50px" />
+                        {{item.product.product_name}}
+                      </td>
+                      <td>{{item.product_qty}}</td>
+                      <td>
+                        {% if item.product.offer %}
+                          <span class="fw-bold">{{item.product.offer.offer_name}}</span>
+                          <del class="text-danger">Rs.{{item.product.selling_price |stringformat:'d'}}</del>
+                          &nbsp; Rs.{{item.product.get_offer}}
+                        {% else %}
+                          Rs.{{item.product.selling_price | stringformat:'d'}}
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
 
             <hr />
             {% if item.product.offer %}
@@ -282,7 +287,7 @@
 
               <span class="float-right" id="new_tot" style="color: black"></span>
             </h6>
-            {% endif %}{% endfor %}
+            {% endif %}
             <input type="hidden" value="COD" name="payment_mode" />
             <div class="mt-3">
               {% if cartitems %}
@@ -427,13 +432,20 @@
                      
                       data : data,
                       success: function (response) {
+                        
                         swal(
                           "Success!",
                           "Your order has been placed successfully.",
                           "success"
                         );
+                         
                         window.location.href = 'my-orders'
+                        setTimeout(function() {
+                          location.reload();
+                        }, 5000);
+
                       },
+                      
                     });
                   };
                 });

@@ -406,15 +406,15 @@
                         <td>{{sale.quantity}}</td>
                         <td>₹ {{sale.product.selling_price}}</td>
                         {% if sale.order.status == 'Pending' %}
-                        <td><span style="background-color: #fff2e1 !important; color: #fdac41 !important; border-radius: 0; " class="badge">{{sale.order.status}}</span></td>
-                        {% elif sale.order.status == 'Out for Delivery' %}
-                        <td><span style="background-color: #dff9ec !important; color: #39da8a !important; border-radius: 0; " class="badge">{{sale.order.status}}</span></td>
-                        {% elif sale.order.status == 'Cancelled' %}
-                        <td><span style="background-color: #ffe4e4 !important; color: #e85a5a !important; border-radius: 0; " class="badge">{{sale.order.status}}</span></td>
-                        {% elif sale.order.status == 'Shipped' %}
-                        <td><span style="background-color: #e5edfc !important; color: #6d99eb !important; border-radius: 0; " class="badge">{{sale.order.status}}</span></td>
+                        <td><span style="background-color: #fff2e1 !important; color: #fdac41 !important; border-radius: 0; " class="badge">Pending</span></td>
+                        {% elif sale.order.status == 'Order Confirmed' %}
+                        <td><span style="background-color: #dff9ec !important; color: #39da8a !important; border-radius: 0; " class="badge">Order Confirmed</span></td>
+                        {% elif sale.order.status == 'Out for delivery' %}
+                        <td><span style="background-color: #ffe4e4 !important; color: #e85a5a !important; border-radius: 0; " class="badge">Out for delivery</span></td>
                         {% elif sale.order.status == 'Delivered' %}
-                        <td><span style="background-color: #dff9ec !important; color: #39da8a !important; border-radius: 0; " class="badge">{{sale.order.status}}</span></td>
+                        <td><span style="background-color: #e5edfc !important; color: #6d99eb !important; border-radius: 0; " class="badge">Delivered</span></td>
+                        {% elif sale.order.status == 'cancelled' %}
+                        <td><span style="background-color: #dff9ec !important; color: #39da8a !important; border-radius: 0; " class="badge">cancelled</span></td>
                         {% endif %}
                       </tr>
                       {% endfor %}

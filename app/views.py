@@ -142,6 +142,12 @@ def register(request):
             password1 = request.POST['pass']
             password2 = request.POST['pass1']
 
+            Pass = ValidatePassword(password1)
+            if password1 == password2:
+                if Pass is False:
+                    messages.info(request,'Enter Strong Password')
+                    return render(request,'register.html')
+
             if username.strip() == '' or password1.strip() == '' or password2.strip() == '':
                 messages.error(request, "Fields can't be blank!!!")
                 return redirect('register')
@@ -287,17 +293,12 @@ def logout(request):
 def validate_name(value):
     if not re.match(r'^[a-zA-Z\s]*$', value):
         return 'Name should only contain alphabets and spaces'
-    
     elif value.strip() == '':
         return 'Name field cannot be empty or contain only spaces' 
     elif User.objects.filter(username=value).exists():
         return 'Usename already exist'
     else:
         return False
-
-
-
-
 
 
 def custom_404_view(request):

@@ -317,6 +317,7 @@ def editcategory(request, slug):
 
 
 #  search category
+@superuser_required
 def searchcat(request):
     if request.method =='POST':
         searched = request.POST['searchvalue']
@@ -326,8 +327,8 @@ def searchcat(request):
         if category.exists():
             return render(request,'searchcat.html',{'searched':searched,'category':category})    
         else:
-           
-            return redirect('categorylist',{'message': 'Category does not exist'})
+            messages.error(request,"Category does not exist")
+            return redirect('categorylist')
         
     return render(request,'searchcat.html')
 
@@ -414,6 +415,7 @@ def orderstatus(request):
 
 
 # status updation 
+@superuser_required
 def update_status(request, order_item_id):
     order = Order.objects.get(id=order_item_id)
     if request.method == 'POST':
@@ -466,6 +468,7 @@ def dashboard(request):
 
 
 # sales report
+@superuser_required
 def salesreport(request):
     
     context = {}
@@ -542,6 +545,7 @@ def salesreport(request):
 
 
 # excel
+@superuser_required
 def export_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=Expenses' + \
@@ -596,7 +600,7 @@ def couponlist(request):
     coupon = Coupon.objects.all()
     return render(request, 'couponlist.html', {'coupon': coupon})
 
-
+@superuser_required
 def deletecoupon(request, coupon_id):
     coupon =Coupon.objects.get(id=coupon_id)
     coupon.delete()
@@ -608,6 +612,7 @@ def deletecoupon(request, coupon_id):
 # <-----------------------------------------------------offer management----------------------------------------->
 
 # add offer
+@superuser_required
 def addoffer(request):
     if request.method == 'POST':
         form = OfferForm(request.POST, request.FILES)
@@ -644,6 +649,7 @@ def offerlist(request):
 
 
 # delete offer
+@superuser_required
 def deleteoffer(request, offer_id):
     offer =Offer.objects.get(id=offer_id)
     offer.delete()

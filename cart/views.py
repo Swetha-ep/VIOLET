@@ -152,6 +152,7 @@ def addaddress(request):
         lname = request.POST.get('lname')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
+        email = request.POST.get('email')
         city = request.POST.get('city')
         state = request.POST.get('state')
         country = request.POST.get('country')
@@ -164,6 +165,7 @@ def addaddress(request):
             lname=lname,
             phone=phone,
             address=address,
+            email = email,
             city=city,
             state=state,
             country=country,
@@ -288,6 +290,7 @@ def editprofile(request, profile_id):
         lname = request.POST.get('lname')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
+        email = request.POST.get('email')
         city = request.POST.get('city')
         state = request.POST.get('state')
         country = request.POST.get('country')
@@ -297,6 +300,7 @@ def editprofile(request, profile_id):
         profile.lname = lname
         profile.phone = phone
         profile.address = address
+        profile.email = email
         profile.city = city
         profile.state = state
         profile.country = country
